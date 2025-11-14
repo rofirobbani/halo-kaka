@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kolam Aplikasi - Halo KAKA</title>
-    <!-- Memuat Tailwind CSS dari CDN -->
+    
+    <!-- Memuat Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Memuat Google Font (Inter) -->
@@ -29,18 +30,14 @@
             }
         }
     </script>
-
+    
     <style>
-        /* Font Kustom */
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Animasi smooth scrolling */
+        html {
             scroll-behavior: smooth;
         }
-        /* CSS untuk menu mobile (Checkbox Hack) */
-        #menu-toggle { display: none; }
-        #menu-toggle:checked + label + #mobile-menu { display: block; }
-        
-        /* CSS untuk Modal */
+
+        /* CSS untuk Modal (diperlukan untuk SEMUA modal) */
         .modal {
             display: none; /* Sembunyi secara default */
             transition: opacity 0.3s ease;
@@ -48,7 +45,16 @@
         .modal.flex {
             display: flex; /* Ditampilkan oleh JS */
         }
-        /* CSS untuk Loading Spinner */
+        
+        /* CSS untuk Hamburger (diperlukan untuk header.html) */
+        #menu-toggle {
+            display: none;
+        }
+        #menu-toggle:checked + label + #mobile-menu {
+            display: block;
+        }
+        
+        /* CSS untuk Loading Spinner (khusus halaman ini) */
         #loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: #3486d9;
@@ -62,46 +68,20 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="font-sans text-gray-800 bg-gray-50">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="index.html" class="text-3xl font-bold text-accent">Halo KAKA</a>
+    <!-- 1. HEADER (Placeholder) -->
+    <!-- Kode header.html akan dimuat oleh js/main.js ke sini -->
+    <div id="header-placeholder">
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="text-3xl font-bold text-accent">Halo KAKA</div>
+                <div class="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </nav>
+        </header>
+    </div>
 
-            <!-- Menu Desktop -->
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="index.html#beranda" class="text-gray-600 hover:text-accent transition duration-300">Beranda</a>
-                <a href="index.html#top-app" class="text-gray-600 hover:text-accent transition duration-300">Top App</a>
-                <a href="index.html#daftar" class="text-gray-600 hover:text-accent transition duration-300">Daftar</a>
-                <a href="kolam-aplikasi.html" class="text-accent font-semibold">Kolam Aplikasi</a>
-                <!-- UPDATE: Tombol login sekarang memicu modal -->
-                <button onclick="openModal('modal-login')" class="bg-accent text-white px-5 py-2 rounded-full font-medium hover:bg-accent-dark transition duration-300">
-                    Login
-                </button>
-            </div>
-
-            <!-- Tombol Menu Mobile -->
-            <div class="md:hidden flex items-center">
-                <input type="checkbox" id="menu-toggle" class="hidden">
-                <label for="menu-toggle" class="md:hidden cursor-pointer">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </label>
-            </div>
-        </nav>
-
-        <!-- Menu Mobile (Dropdown) -->
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4">
-            <a href="index.html#beranda" class="block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Beranda</a>
-            <a href="index.html#top-app" class="block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Top App</a>
-            <a href="index.html#daftar" class="block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Daftar</a>
-            <a href="kolam-aplikasi.html" class="block px-6 py-2 text-accent font-semibold hover:bg-accent-light">Kolam Aplikasi</a>
-            <a href="#" class="block px-6 py-2 text-accent font-medium hover:bg-accent-light" onclick="openModal('modal-login'); closeHamburger();">Login</a>
-        </div>
-    </header>
-
-    <!-- Main Content: Kolam Aplikasi -->
+    <!-- Main Content: Kolam Aplikasi (Konten unik halaman ini) -->
     <main class="container mx-auto px-6 py-12 min-h-screen">
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Kolam Aplikasi</h1>
         <p class="text-lg text-gray-600 mb-8">Temukan semua aplikasi terdaftar yang siap menunjang kinerja Anda.</p>
@@ -111,16 +91,16 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Pencarian -->
                 <div class="md:col-span-4">
-                    <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Cari Aplikasi</label>
+                    <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Cari Aplikasi (Nama, Kategori, Developer)</label>
                     <div class="relative">
-                        <input type="text" id="search-input" placeholder="Ketik nama aplikasi..." class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
+                        <input type="text" id="search-input" placeholder="Ketik nama aplikasi, kategori, atau developer..." class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
                         <span class="absolute right-4 top-3.5 text-gray-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                     </div>
                 </div>
                 <!-- Filter -->
-                <div>
+                <div class="">
                     <label for="filter-kategori" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
                     <select id="filter-kategori" class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-accent">
                         <option value="">Semua Kategori</option>
@@ -150,7 +130,7 @@
         <!-- Kontrol Tampilan (Grid/List) -->
         <div class="flex justify-end items-center mb-4">
             <span class="text-sm text-gray-600 mr-3">Tampilan:</span>
-            <button id="view-grid" class="p-2 rounded-lg bg-blue-100 text-accent mr-2">
+            <button id="view-grid" class="p-2 rounded-lg bg-accent-light text-accent mr-2">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             </button>
             <button id="view-list" class="p-2 rounded-lg bg-gray-200 text-gray-600">
@@ -164,114 +144,41 @@
             <p class="ml-4 text-gray-600">Memuat data aplikasi...</p>
         </div>
         <div id="error-container" class="hidden text-center py-16">
-            <p class="text-red-600 font-semibold">Gagal memuat data!</p>
-            <p id="error-message" class="text-gray-600">Pastikan server API Anda (Fase 1) sudah berjalan.</p>
+            <p class="text-xl text-red-600 font-semibold">Gagal Memuat Aplikasi!</p>
+            <p class="text-gray-600 mt-2">Tidak dapat terhubung ke server. Pastikan server backend Anda (npm run dev) sudah berjalan dan coba refresh halaman ini.</p>
         </div>
         <div id="aplikasi-container" class="hidden">
             <!-- Konten diisi oleh JS -->
         </div>
         <p id="no-results" class="hidden text-center text-gray-500 py-12">Tidak ada aplikasi yang ditemukan.</p>
-
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div class="md:col-span-2">
-                    <h4 class="text-2xl font-bold text-white mb-4">Halo KAKA</h4>
-                    <p class="text-gray-400 mb-4">Dikembangkan oleh BPS Provinsi NTB...</p>
-                    <p class="text-sm text-gray-500">&copy; 2025 BPS Provinsi NTB. All rights reserved.</p>
-                </div>
-                <div>
-                    <h5 class="text-lg font-semibold text-white mb-4">Kontak Kami</h5>
-                    <ul class="space-y-3">
-                         <li class="flex items-start">
-                            <span class="mt-1 mr-3 w-5 h-5 flex-shrink-0">
-                                <svg class="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            </span>
-                            Jl. Dr. Soedjono No. 74, Mataram, NTB
-                        </li>
-                        <li class="flex items-center">
-                            <span class="mr-3 w-5 h-5 flex-shrink-0">
-                                <svg class="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                            </span>
-                            (0370) 632315
-                        </li>
-                         <li class="flex items-center">
-                            <span class="mr-3 w-5 h-5 flex-shrink-0">
-                                <svg class="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            </span>
-                            bps5200@bps.go.id
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="text-lg font-semibold text-white mb-4">Media Sosial</h5>
-                    <div class="flex space-x-4">
-                        <!-- Ikon Media Sosial -->
-                        <a href="#" class="text-gray-400 hover:text-white">... (Facebook) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (Instagram) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (Twitter) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (YouTube) ...</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- =================================================================== -->
-    <!-- MODAL (Detail, Lapor, Login, Lupa Password) -->
-    <!-- =================================================================== -->
-
-    <!-- Modal Detail Aplikasi -->
+    <!-- Modal Detail Aplikasi (Spesifik halaman ini) -->
     <div id="modal-detail" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Modal Header -->
+            <!-- Header Modal -->
             <div class="flex justify-between items-center p-5 border-b">
                 <h3 class="text-2xl font-semibold text-gray-800" id="modal-nama">Nama Aplikasi</h3>
+                <!-- Menggunakan fungsi closeModal() global dari main.js -->
                 <button onclick="closeModal('modal-detail')" class="text-gray-400 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-            <!-- Modal Body -->
+            <!-- Body Modal -->
             <div class="p-6 md:p-8 overflow-y-auto">
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8">
-                    <!-- Logo -->
-                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo">
-                        <!-- Logo diisi oleh JS -->
-                    </div>
-                    <!-- Info Cepat -->
+                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo"></div>
                     <div class="flex-grow">
                         <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <span class="block text-gray-500 font-medium">Kategori</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-kategori">-</span>
-                            </div>
-                            <div>
-                                <span class="block text-gray-500 font-medium">Developer</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-developer">-</span>
-                            </div>
-                            <div>
-                                <span class="block text-gray-500 font-medium">Tahun Buat</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-tahun">-</span>
-                            </div>
-                            <div>
-                                <span class="block text-gray-500 font-medium">Status</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-status">-</span>
-                            </div>
-                            <div>
-                                <span class="block text-gray-500 font-medium">Narahubung</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-narahubung">-</span>
-                            </div>
-                            <div>
-                                <span class="block text-gray-500 font-medium">Total Pengunjung</span>
-                                <span class="block text-gray-800 font-semibold" id="modal-pengunjung">-</span>
-                            </div>
+                            <div><span class="block text-gray-500 font-medium">Kategori</span><span class="block text-gray-800 font-semibold" id="modal-kategori">-</span></div>
+                            <div><span class="block text-gray-500 font-medium">Developer</span><span class="block text-gray-800 font-semibold" id="modal-developer">-</span></div>
+                            <div><span class="block text-gray-500 font-medium">Tahun Buat</span><span class="block text-gray-800 font-semibold" id="modal-tahun">-</span></div>
+                            <div><span class="block text-gray-500 font-medium">Status</span><span class="block text-gray-800 font-semibold" id="modal-status">-</span></div>
+                            <div><span class="block text-gray-500 font-medium">Narahubung</span><span class="block text-gray-800 font-semibold" id="modal-narahubung">-</span></div>
+                            <div><span class="block text-gray-500 font-medium">Total Pengunjung</span><span class="block text-gray-800 font-semibold" id="modal-pengunjung">-</span></div>
                         </div>
                     </div>
                 </div>
-                <!-- Penjelasan -->
                 <div class="mt-6">
                     <h4 class="text-lg font-semibold text-gray-800 mb-2">Penjelasan Aplikasi</h4>
                     <p class="text-gray-600 leading-relaxed" id="modal-penjelasan">-</p>
@@ -279,6 +186,7 @@
             </div>
             <!-- Modal Footer -->
             <div class="flex flex-col-reverse sm:flex-row justify-between items-center p-5 bg-gray-50 border-t">
+                <!-- Menggunakan fungsi openModal() global dari main.js -->
                 <button onclick="openModal('modal-lapor')" class="w-full sm:w-auto mt-2 sm:mt-0 text-sm text-red-600 hover:text-red-800 transition duration-300">
                     Lapor Aplikasi Bermasalah
                 </button>
@@ -289,570 +197,351 @@
         </div>
     </div>
 
-    <!-- Modal Lapor Aplikasi -->
+    <!-- Modal Lapor Aplikasi (Spesifik halaman ini) -->
     <div id="modal-lapor" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
-            <!-- Modal Header -->
             <div class="flex justify-between items-center p-5 border-b">
                 <h3 class="text-xl font-semibold text-gray-800">Lapor Aplikasi Bermasalah</h3>
                 <button onclick="closeModal('modal-lapor')" class="text-gray-400 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-            <!-- Modal Body -->
             <form id="form-laporan" class="p-6 space-y-4">
                 <input type="hidden" id="report-id-app">
                 <input type="hidden" id="report-nama-app">
-                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Aplikasi yang Dilaporkan:</label>
                     <p class="text-lg font-semibold text-accent" id="report-nama-display">-</p>
                 </div>
-                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kategori Laporan (pilih satu atau lebih):</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Kategori Laporan:</label>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="kategori-laporan" value="Error" class="rounded text-accent focus:ring-accent">
-                            <span class="ml-2 text-gray-700">Aplikasi Error / Bug</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="kategori-laporan" value="Tidak Dapat di Akses" class="rounded text-accent focus:ring-accent">
-                            <span class="ml-2 text-gray-700">Tidak Dapat di Akses (Link Mati)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="kategori-laporan" value="Inactive" class="rounded text-accent focus:ring-accent">
-                            <span class="ml-2 text-gray-700">Aplikasi Sudah Tidak Digunakan (Inactive)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="kategori-laporan" value="Lainnya" class="rounded text-accent focus:ring-accent">
-                            <span class="ml-2 text-gray-700">Lainnya...</span>
-                        </label>
+                        <label class="flex items-center"><input type="checkbox" name="kategori-laporan" value="Error" class="rounded text-accent focus:ring-accent"><span class="ml-2 text-gray-700">Aplikasi Error / Bug</span></label>
+                        <label class="flex items-center"><input type="checkbox" name="kategori-laporan" value="Tidak Dapat di Akses" class="rounded text-accent focus:ring-accent"><span class="ml-2 text-gray-700">Tidak Dapat di Akses (Link Mati)</span></label>
+                        <label class="flex items-center"><input type="checkbox" name="kategori-laporan" value="Inactive" class="rounded text-accent focus:ring-accent"><span class="ml-2 text-gray-700">Aplikasi Sudah Tidak Digunakan (Inactive)</span></label>
+                        <label class="flex items-center"><input type="checkbox" name="kategori-laporan" value="Lainnya" class="rounded text-accent focus:ring-accent"><span class="ml-2 text-gray-700">Lainnya...</span></label>
                     </div>
                 </div>
-
                 <div>
                     <label for="report-keterangan" class="block text-sm font-medium text-gray-700">Keterangan Laporan</label>
                     <textarea id="report-keterangan" rows="3" class="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Jelaskan masalah yang Anda temui..."></textarea>
                 </div>
-
                 <div>
                     <label for="report-nama-pelapor" class="block text-sm font-medium text-gray-700">Nama Anda</label>
                     <input type="text" id="report-nama-pelapor" required class="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Masukkan nama Anda...">
                 </div>
-
-                <!-- Pesan Sukses/Error -->
                 <p id="report-success" class="hidden text-sm text-green-600">Laporan berhasil terkirim. Terima kasih!</p>
                 <p id="report-error" class="hidden text-sm text-red-600">Gagal mengirim laporan. Coba lagi nanti.</p>
-
-                <!-- Modal Footer -->
                 <div class="flex justify-end pt-4">
-                    <button type="button" onclick="closeModal('modal-lapor')" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg mr-3 hover:bg-gray-300 transition duration-300">
-                        Batal
-                    </button>
-                    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-300">
-                        Kirim Laporan
-                    </button>
+                    <button type="button" onclick="closeModal('modal-lapor')" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg mr-3 hover:bg-gray-300 transition duration-300">Batal</button>
+                    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-300">Kirim Laporan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- BARU: Modal Login -->
-    <div id="modal-login" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center p-5 border-b">
-                <h3 class="text-2xl font-semibold text-gray-800">Login</h3>
-                <button onclick="closeModal('modal-login')" class="text-gray-400 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                </button>
-            </div>
-            <!-- Modal Body -->
-            <form id="form-login" class="p-6 space-y-4">
-                <div>
-                    <label for="login-username" class="block text-sm font-medium text-gray-700">Username atau Email</label>
-                    <input type="text" id="login-username" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
-                </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="login-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
-                </div>
-                
-                <!-- Captcha Matematika -->
-                <div>
-                    <label for="login-captcha" class="block text-sm font-medium text-gray-700">Verifikasi (Anti-Robot)</label>
-                    <div class="flex items-center mt-1">
-                        <span id="captcha-question" class="inline-flex items-center px-4 py-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-600">5 + 3 = ?</span>
-                        <input type="number" id="login-captcha" required class="block w-full p-3 border border-gray-300 rounded-r-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Jawaban">
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="text-sm">
-                        <button type="button" onclick="openLupaPassword()" class="font-medium text-accent hover:text-accent-dark">
-                            Lupa password?
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Pesan Error/Sukses -->
-                <p id="login-message" class="hidden text-sm"></p>
-
-                <div>
-                    <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-accent to-accent-dark text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                        Login
-                    </button>
-                </div>
-                <div class="text-center pt-2">
-                    <p class="text-sm text-gray-600">
-                        Belum punya akun? 
-                        <a href="daftar.html" class="font-medium text-accent hover:text-accent-dark">
-                            Daftar disini
-                        </a>
-                    </p>
-                </div>
-            </form>
-        </div>
+    <!-- 5. FOOTER (Placeholder) -->
+    <div id="footer-placeholder">
+        <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
+            <div class="container mx-auto px-6 text-center">Memuat footer...</div>
+        </footer>
     </div>
+    
+    <!-- 6. MODALS (Placeholder) -->
+    <!-- Kode modal login & lupa password akan dimuat oleh js/main.js ke sini -->
+    <div id="modals-placeholder"></div>
+    
+    <!-- 7. SCRIPT -->
+    <!-- Memuat Skrip Injeksi Komponen yang BARU -->
+    <script src="js/main.js" defer></script>
 
-    <!-- BARU: Modal Lupa Password -->
-    <div id="modal-lupa-password" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center p-5 border-b">
-                <h3 class="text-2xl font-semibold text-gray-800">Lupa Password</h3>
-                <button onclick="closeModal('modal-lupa-password')" class="text-gray-400 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                </button>
-            </div>
-            <!-- Modal Body -->
-            <form id="form-lupa-password" class="p-6 space-y-4">
-                <p class="text-sm text-gray-600">Masukkan email Anda. Kami akan mengirimkan link untuk me-reset password Anda.</p>
-                <div>
-                    <label for="lupa-email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="lupa-email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="email.anda@bps.go.id">
-                </div>
-                
-                <!-- Pesan Error/Sukses -->
-                <p id="lupa-message" class="hidden text-sm"></p>
-
-                <div>
-                    <button type="submit" class="w-full py-3 px-6 bg-accent text-white font-bold rounded-lg shadow-lg hover:bg-accent-dark transition-all duration-300">
-                        Kirim Link Reset
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- =================================================================== -->
-    <!-- JAVASCRIPT GABUNGAN (Logika Fase 2 + Logika Modal Login) -->
-    <!-- =================================================================== -->
+    <!-- Skrip Khusus Halaman Ini -->
     <script>
-        // --- State Global ---
-        let aplikasiDatabase = []; // Akan diisi oleh API
-        let filteredAplikasi = [];
-        let currentView = 'grid'; // 'grid' atau 'list'
-        let captchaNum1, captchaNum2, captchaAnswer; // Untuk Captcha Login
-        
-        const API_BASE_URL = 'http://localhost:5000';
+        /**
+         * Fungsi ini akan dipanggil oleh main.js SETELAH
+         * semua komponen (header, footer, modals) dimuat.
+         */
+        function attachPageSpecificListeners() {
+            // --- State Global (Spesifik Halaman) ---
+            let aplikasiDatabase = []; // Akan diisi oleh API
+            let filteredAplikasi = [];
+            let currentView = 'grid'; // 'grid' atau 'list'
 
-        // --- Elemen DOM ---
-        const container = document.getElementById('aplikasi-container');
-        const searchInput = document.getElementById('search-input');
-        const filterKategori = document.getElementById('filter-kategori');
-        const filterDeveloper = document.getElementById('filter-developer');
-        const filterTahun = document.getElementById('filter-tahun');
-        const filterStatus = document.getElementById('filter-status');
-        const noResults = document.getElementById('no-results');
-        const viewGridBtn = document.getElementById('view-grid');
-        const viewListBtn = document.getElementById('view-list');
-        const loadingContainer = document.getElementById('loading-container');
-        const errorContainer = document.getElementById('error-container');
-        const errorMessage = document.getElementById('error-message');
+            // --- Elemen DOM (Spesifik Halaman) ---
+            const container = document.getElementById('aplikasi-container');
+            const searchInput = document.getElementById('search-input');
+            const filterKategori = document.getElementById('filter-kategori');
+            const filterDeveloper = document.getElementById('filter-developer');
+            const filterTahun = document.getElementById('filter-tahun');
+            const filterStatus = document.getElementById('filter-status');
+            const noResults = document.getElementById('no-results');
+            const viewGridBtn = document.getElementById('view-grid');
+            const viewListBtn = document.getElementById('view-list');
+            const loadingContainer = document.getElementById('loading-container');
+            const errorContainer = document.getElementById('error-container');
 
-        // --- Fungsi Render Tampilan ---
-
-        // Fungsi Render Utama
-        function renderAplikasi(aplikasiArray, view) {
-            container.innerHTML = ''; // Kosongkan kontainer
-            
-            if (aplikasiArray.length === 0) {
-                noResults.style.display = 'block';
-                container.style.display = 'none';
-                return;
+            // --- Fungsi Render Tampilan ---
+            function renderAplikasi(aplikasiArray, view) {
+                if (!container) return; // Guard clause
+                container.innerHTML = ''; 
+                
+                if (aplikasiArray.length === 0) {
+                    noResults.style.display = 'block';
+                    container.style.display = 'none';
+                    return;
+                }
+                
+                noResults.style.display = 'none';
+                container.style.display = 'grid'; 
+                
+                if (view === 'grid') {
+                    container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+                    aplikasiArray.forEach(app => { container.innerHTML += renderGrid(app); });
+                } else {
+                    container.className = 'bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200';
+                    aplikasiArray.forEach(app => { container.innerHTML += renderList(app); });
+                }
             }
-            
-            noResults.style.display = 'none';
-            container.style.display = 'grid'; // Tampilkan kontainer
-            
-            if (view === 'grid') {
-                container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-                aplikasiArray.forEach(app => {
-                    container.innerHTML += renderGrid(app);
-                });
-            } else {
-                container.className = 'bg-white shadow-lg rounded-xl overflow-hidden';
-                aplikasiArray.forEach(app => {
-                    container.innerHTML += renderList(app);
-                });
-            }
-        }
 
-        // Template Tampilan Grid
-        function renderGrid(app) {
-            // Gunakan placeholder jika logo tidak ada/kosong
-            const logoHtml = (app.logo && app.logo.startsWith('<svg'))
-                ? app.logo 
-                : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
-                : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
-            
-            return `
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer" onclick="openDetailModal(${app.id_app})">
-                    <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden">
-                        ${logoHtml}
-                    </div>
-                    <div class="p-5">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-1 truncate">${app.nama}</h3>
-                        <span class="text-sm text-gray-500 mb-3 block">${app.kategori}</span>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-medium text-gray-600 truncate">${app.developer}</span>
-                            <span class="text-xs px-3 py-1 rounded-full flex-shrink-0 ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+            function renderGrid(app) {
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
+                
+                return `
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100" onclick="openDetailModal(${app.id_app})">
+                        <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
+                            ${logoHtml}
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-1 truncate" title="${app.nama}">${app.nama}</h3>
+                            <span class="text-sm text-accent mb-3 block">${app.kategori}</span>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-medium text-gray-600 truncate" title="${app.developer}">${app.developer}</span>
+                                <span class="text-xs px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${app.status_aplikasi}
+                                </span>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            function renderList(app) {
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
+
+                return `
+                    <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal(${app.id_app})">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
+                            ${logoHtml}
+                        </div>
+                        <div class="flex-grow mx-4">
+                            <h3 class="text-lg font-semibold text-gray-800">${app.nama}</h3>
+                            <p class="text-sm text-gray-500">${app.kategori} | ${app.developer}</p>
+                        </div>
+                        <div class="flex-shrink-0 flex items-center space-x-4">
+                            <span class="text-sm px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
                                 ${app.status_aplikasi}
                             </span>
+                            <a href="${app.link}" target="_blank" onclick="(e) => e.stopPropagation()" class="hidden md:inline-block bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition duration-300">
+                                Open
+                            </a>
+                            <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
                         </div>
-                    </div>
-                </div>
-            `;
-        }
+                    </div>`;
+            }
 
-        // Template Tampilan List
-        function renderList(app) {
-            const logoHtml = (app.logo && app.logo.startsWith('<svg'))
-                ? app.logo 
-                : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
-                : `<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
+            // --- Fungsi Filter dan Pencarian ---
+            function applyFilters() {
+                const query = searchInput.value.toLowerCase();
+                const kategoriFilter = filterKategori.value;
+                const developerFilter = filterDeveloper.value;
+                const tahunFilter = filterTahun.value;
+                const statusFilter = filterStatus.value;
 
-            return `
-                <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal(${app.id_app})">
-                    <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
-                        ${logoHtml}
-                    </div>
-                    <div class="flex-grow mx-4 min-w-0">
-                        <h3 class="text-lg font-semibold text-gray-800 truncate">${app.nama}</h3>
-                        <p class="text-sm text-gray-500 truncate">${app.kategori} | ${app.developer}</p>
-                    </div>
-                    <div class="flex-shrink-0 flex items-center space-x-4">
-                        <span class="text-sm px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                            ${app.status_aplikasi}
-                        </span>
-                        <a href="${app.link}" target="_blank" onclick="(e) => e.stopPropagation()" class="hidden md:inline-block bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition duration-300">
-                            Open
-                        </a>
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-            `;
-        }
+                filteredAplikasi = aplikasiDatabase.filter(app => {
+                    const matchesQuery = (app.nama && app.nama.toLowerCase().includes(query)) ||
+                                         (app.kategori && app.kategori.toLowerCase().includes(query)) ||
+                                         (app.developer && app.developer.toLowerCase().includes(query));
+                    
+                    const matchesKategori = !kategoriFilter || app.kategori === kategoriFilter;
+                    const matchesDeveloper = !developerFilter || app.developer === developerFilter;
+                    const matchesTahun = !tahunFilter || app.tahun_buat == tahunFilter;
+                    const matchesStatus = !statusFilter || app.status_aplikasi === statusFilter;
+                    
+                    return matchesQuery && matchesKategori && matchesDeveloper && matchesTahun && matchesStatus;
+                });
+                renderAplikasi(filteredAplikasi, currentView);
+            }
 
-        // --- Fungsi Filter dan Pencarian ---
-        function applyFilters() {
-            const query = searchInput.value.toLowerCase();
-            const kategoriFilter = filterKategori.value;
-            const developerFilter = filterDeveloper.value;
-            const tahunFilter = filterTahun.value;
-            const statusFilter = filterStatus.value;
+            // --- Fungsi Inisialisasi ---
+            function populateFilters(aplikasiArray) {
+                const kategoriSet = new Set(aplikasiArray.map(app => app.kategori).filter(Boolean));
+                const developerSet = new Set(aplikasiArray.map(app => app.developer).filter(Boolean));
+                const tahunSet = new Set(aplikasiArray.map(app => app.tahun_buat).filter(Boolean));
+                const statusSet = new Set(aplikasiArray.map(app => app.status_aplikasi).filter(Boolean));
 
-            filteredAplikasi = aplikasiDatabase.filter(app => {
-                // const matchesQuery = app.nama.toLowerCase().includes(query);
-                const matchesQuery = (
-                    app.nama.toLowerCase().includes(query) ||
-                    (app.kategori && app.kategori.toLowerCase().includes(query)) ||
-                    (app.developer && app.developer.toLowerCase().includes(query))
-                );
-                const matchesKategori = !kategoriFilter || app.kategori === kategoriFilter;
-                const matchesDeveloper = !developerFilter || app.developer === developerFilter;
-                const matchesTahun = !tahunFilter || app.tahun_buat == tahunFilter;
-                const matchesStatus = !statusFilter || app.status_aplikasi === statusFilter;
+                filterKategori.innerHTML = '<option value="">Semua Kategori</option>';
+                filterDeveloper.innerHTML = '<option value="">Semua Developer</option>';
+                filterTahun.innerHTML = '<option value="">Semua Tahun</option>';
+                filterStatus.innerHTML = '<option value="">Semua Status</option>';
+
+                kategoriSet.forEach(item => { filterKategori.innerHTML += `<option value="${item}">${item}</option>`; });
+                developerSet.forEach(item => { filterDeveloper.innerHTML += `<option value="${item}">${item}</option>`; });
+                Array.from(tahunSet).sort((a, b) => b - a).forEach(item => { filterTahun.innerHTML += `<option value="${item}">${item}</option>`; });
+                statusSet.forEach(item => { filterStatus.innerHTML += `<option value="${item}">${item}</option>`; });
+            }
+            
+            // --- Fungsi Logika Modal (Spesifik Halaman) ---
+            
+            // Definisikan 'openDetailModal' secara global agar bisa diakses onclick
+            // Kita harus menempelkannya ke 'window' karena skrip ini ada di dalam fungsi
+            window.openDetailModal = function(id) {
+                const app = aplikasiDatabase.find(app => app.id_app == id);
+                if (!app) return;
+
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : `<svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
                 
-                return matchesQuery && matchesKategori && matchesDeveloper && matchesTahun && matchesStatus;
-            });
+                document.getElementById('modal-logo').innerHTML = logoHtml;
+                document.getElementById('modal-nama').innerText = app.nama;
+                document.getElementById('modal-kategori').innerText = app.kategori || '-';
+                document.getElementById('modal-developer').innerText = app.developer || '-';
+                document.getElementById('modal-tahun').innerText = app.tahun_buat || '-';
+                document.getElementById('modal-status').innerText = app.status_aplikasi || '-';
+                document.getElementById('modal-narahubung').innerText = app.narahubung || '-';
+                document.getElementById('modal-pengunjung').innerText = app.jumlah_pengunjung || '0';
+                document.getElementById('modal-penjelasan').innerText = app.penjelasan || 'Tidak ada penjelasan.';
+                document.getElementById('modal-link').href = app.link;
 
-            renderAplikasi(filteredAplikasi, currentView);
-        }
-
-        // --- Fungsi Inisialisasi ---
-
-        // Mengisi pilihan filter secara dinamis
-        function populateFilters(aplikasiArray) {
-            const kategoriSet = new Set(aplikasiArray.map(app => app.kategori).filter(Boolean));
-            const developerSet = new Set(aplikasiArray.map(app => app.developer).filter(Boolean));
-            const tahunSet = new Set(aplikasiArray.map(app => app.tahun_buat).filter(Boolean));
-            const statusSet = new Set(aplikasiArray.map(app => app.status_aplikasi).filter(Boolean));
-            
-            // Urutkan tahun (terbaru dulu)
-            const tahunArray = Array.from(tahunSet).sort((a, b) => b - a);
-
-            kategoriSet.forEach(item => filterKategori.innerHTML += `<option value="${item}">${item}</option>`);
-            developerSet.forEach(item => filterDeveloper.innerHTML += `<option value="${item}">${item}</option>`);
-            tahunArray.forEach(item => filterTahun.innerHTML += `<option value="${item}">${item}</option>`);
-            statusSet.forEach(item => filterStatus.innerHTML += `<option value="${item}">${item}</option>`);
-        }
-        
-        // --- Fungsi Logika Modal (Login, Lapor, Detail) ---
-        
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('flex');
-            document.body.style.overflow = 'hidden'; // Mencegah scroll body
-            
-            if (modalId === 'modal-login') {
-                generateCaptcha();
-            }
-            // Jika membuka modal lapor dari detail, tutup modal detail
-            if (modalId === 'modal-lapor') {
-                 closeModal('modal-detail');
-            }
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('flex');
-            document.body.style.overflow = 'auto';
-            
-            // Reset form lapor jika ditutup
-            if (modalId === 'modal-lapor') {
-                document.getElementById('form-laporan').reset();
-                document.getElementById('report-success').style.display = 'none';
-                document.getElementById('report-error').style.display = 'none';
-            }
-            // Reset form login jika ditutup
-            if (modalId === 'modal-login') {
-                document.getElementById('form-login').reset();
-                document.getElementById('login-message').style.display = 'none';
-            }
-            // Reset form lupa password jika ditutup
-            if (modalId === 'modal-lupa-password') {
-                document.getElementById('form-lupa-password').reset();
-                document.getElementById('lupa-message').style.display = 'none';
-            }
-        }
-
-        function closeHamburger() {
-             document.getElementById('menu-toggle').checked = false;
-        }
-
-        function openLupaPassword() {
-            closeModal('modal-login');
-            openModal('modal-lupa-password');
-        }
-
-        // Membuka Modal Detail
-        function openDetailModal(id) {
-            const app = aplikasiDatabase.find(app => app.id_app == id);
-            if (!app) return;
-
-            const logoHtml = (app.logo && app.logo.startsWith('<svg'))
-                ? app.logo 
-                : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
-                : `<svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
-            
-            document.getElementById('modal-logo').innerHTML = logoHtml;
-            document.getElementById('modal-nama').innerText = app.nama;
-            document.getElementById('modal-kategori').innerText = app.kategori || '-';
-            document.getElementById('modal-developer').innerText = app.developer || '-';
-            document.getElementById('modal-tahun').innerText = app.tahun_buat || '-';
-            document.getElementById('modal-status').innerText = app.status_aplikasi || '-';
-            document.getElementById('modal-narahubung').innerText = app.narahubung || '-';
-            document.getElementById('modal-pengunjung').innerText = app.jumlah_pengunjung || '0';
-            document.getElementById('modal-penjelasan').innerText = app.penjelasan || '-';
-            document.getElementById('modal-link').href = app.link;
-
-            // Siapkan modal lapor
-            document.getElementById('report-id-app').value = app.id_app;
-            document.getElementById('report-nama-app').value = app.nama;
-            document.getElementById('report-nama-display').innerText = app.nama;
-            
-            openModal('modal-detail');
-        }
-
-        // --- Fungsi Captcha ---
-        function generateCaptcha() {
-            captchaNum1 = Math.floor(Math.random() * 10) + 1;
-            captchaNum2 = Math.floor(Math.random() * 5) + 1;
-            captchaAnswer = captchaNum1 + captchaNum2;
-            
-            const qEl = document.getElementById('captcha-question');
-            const aEl = document.getElementById('login-captcha');
-            
-            if (qEl) qEl.innerText = `${captchaNum1} + ${captchaNum2} = ?`;
-            if (aEl) aEl.value = '';
-        }
-
-        // --- Event Listeners ---
-
-        // Event listener saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Cek jika URL memiliki ?login=true
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('login') === 'true') {
-                openModal('modal-login');
-            }
-
-            // Mulai memuat data aplikasi
-            try {
-                loadingContainer.style.display = 'flex';
-                errorContainer.style.display = 'none';
-                container.style.display = 'none';
-
-                const response = await fetch(`${API_BASE_URL}/api/aplikasi`);
+                document.getElementById('report-id-app').value = app.id_app;
+                document.getElementById('report-nama-app').value = app.nama;
+                document.getElementById('report-nama-display').innerText = app.nama;
                 
-                if (!response.ok) {
-                    throw new Error(`Gagal mengambil data dari API (Status: ${response.status})`);
-                }
-                
-                const data = await response.json();
-                
-                aplikasiDatabase = data;
-                filteredAplikasi = data;
-                
-                loadingContainer.style.display = 'none';
-                
-                populateFilters(aplikasiDatabase);
-                renderAplikasi(aplikasiDatabase, currentView);
-
-            } catch (error) {
-                console.error('Gagal memuat aplikasi:', error);
-                loadingContainer.style.display = 'none';
-                errorContainer.style.display = 'block';
-                errorMessage.innerText = 'Koneksi ke server API gagal. Pastikan server backend Anda (di folder /backend) sudah berjalan dengan perintah "npm run dev".';
-            }
-        });
-
-        // Event listener untuk input pencarian
-        searchInput.addEventListener('input', applyFilters);
-
-        // Event listener untuk semua filter dropdown
-        filterKategori.addEventListener('change', applyFilters);
-        filterDeveloper.addEventListener('change', applyFilters);
-        filterTahun.addEventListener('change', applyFilters);
-        filterStatus.addEventListener('change', applyFilters);
-
-        // Event listener untuk tombol view
-        viewGridBtn.addEventListener('click', () => {
-            currentView = 'grid';
-            viewGridBtn.classList.add('bg-blue-100', 'text-accent');
-            viewGridBtn.classList.remove('bg-gray-200', 'text-gray-600');
-            viewListBtn.classList.add('bg-gray-200', 'text-gray-600');
-            viewListBtn.classList.remove('bg-blue-100', 'text-accent');
-            renderAplikasi(filteredAplikasi, currentView);
-        });
-
-        viewListBtn.addEventListener('click', () => {
-            currentView = 'list';
-            viewListBtn.classList.add('bg-blue-100', 'text-accent');
-            viewListBtn.classList.remove('bg-gray-200', 'text-gray-600');
-            viewGridBtn.classList.add('bg-gray-200', 'text-gray-600');
-            viewGridBtn.classList.remove('bg-blue-100', 'text-accent');
-            renderAplikasi(filteredAplikasi, currentView);
-        });
-
-        // Event listener untuk Form Laporan (Fase 2)
-        document.getElementById('form-laporan').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const checkedKategori = [];
-            document.querySelectorAll('input[name="kategori-laporan"]:checked').forEach(cb => {
-                checkedKategori.push(cb.value);
-            });
-            
-            const data = {
-                id_app: document.getElementById('report-id-app').value,
-                nama_aplikasi: document.getElementById('report-nama-app').value,
-                jenis_laporan: checkedKategori.join(', '),
-                keterangan: document.getElementById('report-keterangan').value,
-                nama_pelapor: document.getElementById('report-nama-pelapor').value,
+                // Gunakan fungsi modal global dari main.js
+                openModal('modal-detail');
             };
 
-            const successMsg = document.getElementById('report-success');
-            const errorMsg = document.getElementById('report-error');
-            successMsg.style.display = 'none';
-            errorMsg.style.display = 'none';
+            // --- Event Listener Utama (diekseskusi oleh main.js) ---
+            
+            // 1. Ambil Data
+            (async function loadAplikasi() {
+                try {
+                    loadingContainer.style.display = 'flex';
+                    errorContainer.style.display = 'none';
+                    container.style.display = 'none';
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/laporan`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+                    const response = await fetch('http://localhost:5000/api/aplikasi');
+                    
+                    if (!response.ok) {
+                        throw new Error(`Gagal mengambil data: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    aplikasiDatabase = data;
+                    filteredAplikasi = data;
+                    
+                    loadingContainer.style.display = 'none';
+
+                    populateFilters(aplikasiDatabase);
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const searchQuery = urlParams.get('search');
+                    
+                    if (searchQuery) {
+                        searchInput.value = searchQuery; 
+                        applyFilters(); 
+                    } else {
+                        renderAplikasi(aplikasiDatabase, currentView); 
+                    }
+
+                } catch (error) {
+                    console.error('Gagal memuat aplikasi:', error);
+                    loadingContainer.style.display = 'none';
+                    errorContainer.style.display = 'block';
+                }
+            })();
+
+
+            // 2. Pasang Listener Filter/Search
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(applyFilters, 300); 
+            });
+
+            filterKategori.addEventListener('change', applyFilters);
+            filterDeveloper.addEventListener('change', applyFilters);
+            filterTahun.addEventListener('change', applyFilters);
+            filterStatus.addEventListener('change', applyFilters);
+
+            // 3. Pasang Listener Tombol View
+            viewGridBtn.addEventListener('click', () => {
+                currentView = 'grid';
+                viewGridBtn.classList.add('bg-accent-light', 'text-accent');
+                viewGridBtn.classList.remove('bg-gray-200', 'text-gray-600');
+                viewListBtn.classList.add('bg-gray-200', 'text-gray-600');
+                viewListBtn.classList.remove('bg-accent-light', 'text-accent');
+                renderAplikasi(filteredAplikasi, currentView);
+            });
+
+            viewListBtn.addEventListener('click', () => {
+                currentView = 'list';
+                viewListBtn.classList.add('bg-accent-light', 'text-accent');
+                viewListBtn.classList.remove('bg-gray-200', 'text-gray-600');
+                viewGridBtn.classList.add('bg-gray-200', 'text-gray-600');
+                viewGridBtn.classList.remove('bg-accent-light', 'text-accent');
+                renderAplikasi(filteredAplikasi, currentView);
+            });
+
+            // 4. Pasang Listener Form Laporan
+            document.getElementById('form-laporan').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const checkedKategori = [];
+                document.querySelectorAll('input[name="kategori-laporan"]:checked').forEach(cb => {
+                    checkedKategori.push(cb.value);
                 });
+                
+                const data = {
+                    id_app: document.getElementById('report-id-app').value,
+                    nama_aplikasi: document.getElementById('report-nama-app').value,
+                    jenis_laporan: checkedKategori.join(', '), 
+                    keterangan: document.getElementById('report-keterangan').value,
+                    nama_pelapor: document.getElementById('report-nama-pelapor').value,
+                };
 
-                if (response.ok) {
-                    successMsg.style.display = 'block';
-                    this.reset();
-                    setTimeout(() => closeModal('modal-lapor'), 2000);
-                } else {
+                const successMsg = document.getElementById('report-success');
+                const errorMsg = document.getElementById('report-error');
+                successMsg.style.display = 'none';
+                errorMsg.style.display = 'none';
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/laporan', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (response.ok) {
+                        successMsg.style.display = 'block';
+                        this.reset();
+                        setTimeout(() => closeModal('modal-lapor'), 2500);
+                    } else {
+                        errorMsg.innerText = 'Gagal mengirim laporan. Coba lagi nanti.';
+                        errorMsg.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error submitting report:', error);
+                    errorMsg.innerText = 'Tidak dapat terhubung ke server. Pastikan backend berjalan.';
                     errorMsg.style.display = 'block';
                 }
-            } catch (error) {
-                console.error('Error submitting report:', error);
-                errorMsg.style.display = 'block';
-            }
-        });
-
-        // Event listener untuk Form Login
-        document.getElementById('form-login').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const messageEl = document.getElementById('login-message');
-            messageEl.style.display = 'none';
-
-            // 1. Validasi Captcha
-            const userAnswer = parseInt(document.getElementById('login-captcha').value);
-            if (userAnswer !== captchaAnswer) {
-                messageEl.innerText = 'Error: Jawaban verifikasi salah. Silakan coba lagi.';
-                messageEl.className = 'text-sm text-red-600';
-                messageEl.style.display = 'block';
-                generateCaptcha(); // Buat soal baru
-                return;
-            }
-
-            // 2. TODO (Fase 3): Kirim data login ke API Backend
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            console.log('Data Login (untuk Fase 3):', { username, password });
-
-            // --- Simulasi Sukses ---
-            messageEl.innerText = 'Login berhasil! Mengalihkan...';
-            messageEl.className = 'text-sm text-green-600';
-            messageEl.style.display = 'block';
+            });
             
-            setTimeout(() => {
-                 alert('Login Berhasil (Fase 3: Akan diarahkan ke Dashboard Pengguna)');
-                 closeModal('modal-login');
-            }, 1500);
-            // --- Akhir Simulasi ---
-        });
-
-        // Event listener untuk Form Lupa Password
-        document.getElementById('form-lupa-password').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const messageEl = document.getElementById('lupa-message');
-            const email = document.getElementById('lupa-email').value;
-            messageEl.style.display = 'none';
-
-            // TODO (Fase 3): Kirim email ke API Backend
-            console.log('Email Lupa Password (untuk Fase 3):', email);
-            
-            // --- Simulasi Sukses ---
-            messageEl.innerText = 'Permintaan terkirim. Jika email Anda terdaftar, Anda akan menerima link reset password.';
-            messageEl.className = 'text-sm text-green-600';
-            messageEl.style.display = 'block';
-            
-            setTimeout(() => {
-                closeModal('modal-lupa-password');
-            }, 3000);
-            // --- Akhir Simulasi ---
-        });
-
+        } // --- Akhir dari attachPageSpecificListeners ---
     </script>
 
 </body>

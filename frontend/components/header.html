@@ -1,0 +1,49 @@
+<!-- Ini adalah file parsial, hanya berisi kode header -->
+<!-- Desain ini disesuaikan untuk mendukung Login Dinamis (Fase 3) -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <!-- Logo/Brand (Link ke Beranda) -->
+        <!-- ID 'user-greeting' digunakan oleh main.js untuk menyisipkan nama -->
+        <a href="index.html" class="text-3xl font-bold text-accent" id="user-greeting">
+            Halo KAKA
+        </a>
+        
+        <!-- Menu Desktop -->
+        <div class="hidden md:flex items-center space-x-6">
+            <!-- Link navigasi ini akan di-highlight oleh main.js -->
+            <a href="index.html" data-nav="beranda" class="nav-link text-gray-600 hover:text-accent transition duration-300">Beranda</a>
+            <a href="index.html#top-app" data-nav="top-app" class="nav-link text-gray-600 hover:text-accent transition duration-300">Top App</a>
+            <a href="index.html#daftar" data-nav="daftar-app" class="nav-link text-gray-600 hover:text-accent transition duration-300">Daftar Aplikasi</a>
+            <a href="kolam-aplikasi.html" data-nav="kolam-aplikasi" class="nav-link text-gray-600 hover:text-accent transition duration-300">Kolam Aplikasi</a>
+            
+            <!-- Tombol Login (Akan disembunyikan oleh JS jika sudah login) -->
+            <button id="login-btn" onclick="openModal('modal-login')" class="bg-accent text-white px-5 py-2 rounded-full font-medium hover:bg-accent-dark transition duration-300">
+                Login
+            </button>
+            
+            <!-- Tombol Logout (Akan ditampilkan oleh JS jika sudah login) -->
+            <button id="logout-btn" onclick="openModal('modal-logout-confirm')" class="hidden bg-red-500 text-white px-5 py-2 rounded-full font-medium hover:bg-red-600 transition duration-300">
+                Logout
+            </button>
+        </div>
+        
+        <!-- Tombol Hamburger (Mobile) -->
+        <input type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="md:hidden cursor-pointer">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </label>
+
+        <!-- Menu Mobile (muncul saat hamburger diklik) -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4">
+            <a href="index.html" data-nav="beranda" class="nav-link block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Beranda</a>
+            <a href="index.html#top-app" data-nav="top-app" class="nav-link block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Top App</a>
+            <a href="index.html#daftar" data-nav="daftar-app" class="nav-link block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Daftar Aplikasi</a>
+            <a href="kolam-aplikasi.html" data-nav="kolam-aplikasi" class="nav-link block px-6 py-2 text-gray-600 hover:bg-accent-light" onclick="closeHamburger()">Kolam Aplikasi</a>
+            
+            <!-- Tombol Login/Logout Mobile -->
+            <a href="#" id="login-btn-mobile" class="block px-6 py-2 text-accent font-medium hover:bg-accent-light" onclick="openModal('modal-login'); closeHamburger();">Login</a>
+            <a href="#" id="logout-btn-mobile" class="hidden block px-6 py-2 text-red-500 font-medium hover:bg-red-50" onclick="logoutUser(); closeHamburger();">Logout</a>
+        </div>
+    </nav>
+</header>

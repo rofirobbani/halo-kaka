@@ -32,200 +32,237 @@
     </script>
     
     <style>
-        /* CSS-only hamburger menu logic */
-        #menu-toggle { display: none; }
-        #menu-toggle:checked + label + #mobile-menu { display: block; }
+        /* CSS untuk Modal */
+        .modal {
+            display: none; /* Sembunyi secara default */
+            transition: opacity 0.3s ease;
+        }
+        .modal.flex {
+            display: flex; /* Ditampilkan oleh JS */
+        }
+        
+        /* CSS untuk Hamburger (dipindahkan dari header.html agar tetap berfungsi) */
+        #menu-toggle {
+            display: none;
+        }
+        #menu-toggle:checked + label + #mobile-menu {
+            display: block;
+        }
     </style>
 </head>
-<body class="font-sans bg-gray-50 text-gray-800">
+<body class="font-sans text-gray-800 bg-gray-50">
 
-    <!-- 1. HEADER (Konsisten) -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="text-3xl font-bold text-accent">Halo KAKA</a>
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="index.html" class="text-gray-600 hover:text-accent transition duration-300">Beranda</a>
-                <a href="index.html#top-app" class="text-gray-600 hover:text-accent transition duration-300">Top App</a>
-                <a href="index.html#daftar" class="text-gray-600 hover:text-accent transition duration-300">Daftar Aplikasi</a>
-                <a href="kolam-aplikasi.html" class="text-gray-600 hover:text-accent transition duration-300">Kolam Aplikasi</a>
-                <!-- Tombol Login di-nonaktifkan di halaman daftar -->
-                <a href="index.html?login=true" class="bg-accent text-white px-5 py-2 rounded-full font-medium hover:bg-accent-dark transition duration-300">
-                    Login
-                </a>
-            </div>
-            <!-- Tombol Hamburger (Mobile) -->
-            <input type="checkbox" id="menu-toggle" />
-            <label for="menu-toggle" class="md:hidden cursor-pointer">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </label>
-            <!-- Menu Mobile -->
-            <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4">
-                <a href="index.html" class="block px-6 py-2 text-gray-600 hover:bg-accent-light">Beranda</a>
-                <a href="index.html#top-app" class="block px-6 py-2 text-gray-600 hover:bg-accent-light">Top App</a>
-                <a href="index.html#daftar" class="block px-6 py-2 text-gray-600 hover:bg-accent-light">Daftar Aplikasi</a>
-                <a href="kolam-aplikasi.html" class="block px-6 py-2 text-gray-600 hover:bg-accent-light">Kolam Aplikasi</a>
-                <a href="index.html?login=true" class="block px-6 py-2 text-accent font-medium hover:bg-accent-light">Login</a>
-            </div>
-        </nav>
-    </header>
+    <!-- 1. HEADER (Placeholder) -->
+    <!-- Kode header akan dimuat oleh js/main.js ke sini -->
+    <div id="header-placeholder">
+        <!-- Opsional: Tampilkan "Loading..." sederhana -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="text-3xl font-bold text-accent">Halo KAKA</div>
+                <div class="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </nav>
+        </header>
+    </div>
 
-    <!-- Main Content: Formulir Pendaftaran -->
-    <main class="container mx-auto px-6 py-12 md:py-24 flex justify-center items-center min-h-screen">
-        <div class="bg-white p-8 md:p-12 rounded-xl shadow-2xl w-full max-w-2xl">
-            <h1 class="text-3xl font-bold text-center text-gray-900 mb-2">Buat Akun Baru</h1>
-            <p class="text-center text-gray-600 mb-8">Daftarkan diri Anda untuk berkontribusi.</p>
+    <main class="container mx-auto px-6 py-16 md:py-24">
+        
+        <!-- Kontainer Form Pendaftaran -->
+        <div class="max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2 text-center">Buat Akun Baru</h1>
+            <p class="text-gray-600 text-center mb-8">Daftarkan akun Anda untuk berkontribusi.</p>
 
-            <form id="form-daftar" class="space-y-5">
-                <!-- Nama Lengkap -->
-                <div>
-                    <label for="reg-nama" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                    <input type="text" id="reg-nama" name="nama" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
-                </div>
-
-                <!-- Email Aktif -->
-                <div>
-                    <label for="reg-email" class="block text-sm font-medium text-gray-700">Email Aktif</label>
-                    <input type="email" id="reg-email" name="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="contoh@bps.go.id">
-                </div>
-
-                <!-- Satuan Kerja -->
-                <div>
-                    <label for="reg-satker" class="block text-sm font-medium text-gray-700">Satuan Kerja</label>
-                    <input type="text" id="reg-satker" name="satker" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="BPS Provinsi NTB">
-                </div>
-
-                <!-- No HP/WA -->
-                <div>
-                    <label for="reg-nohp" class="block text-sm font-medium text-gray-700">No. HP/WA</label>
-                    <div class="flex mt-1">
-                        <span class="inline-flex items-center px-4 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                            +62
-                        </span>
-                        <input type="tel" id="reg-nohp" name="nohp" required class="block w-full p-3 border border-gray-300 rounded-r-md shadow-sm focus:ring-accent focus:border-accent" placeholder="81234567890">
+            <form id="form-registrasi" class="space-y-5">
+                
+                <!-- Info Dasar -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="nama-lengkap" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" name="nama" id="nama-lengkap" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email Aktif</label>
+                        <input type="email" name="email" id="email" required placeholder="email@gmail.go.id" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
 
-                <!-- Username -->
-                <div>
-                    <label for="reg-username" class="block text-sm font-medium text-gray-700">Username</g-username>
-                    <input type="text" id="reg-username" name="username" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                <!-- Info Kontak & Kerja -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="satker" class="block text-sm font-medium text-gray-700">Satuan Kerja</label>
+                        <input type="text" name="satker" id="satker" required placeholder="BPS Provinsi NTB" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    </div>
+                    <div>
+                        <label for="no-hp" class="block text-sm font-medium text-gray-700">No. HP/WA</label>
+                        <div class="flex items-stretch mt-1">
+                            <span class="flex items-center justify-center px-4 py-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-600">+62</span>
+                            <input type="tel" name="noHP" id="no-hp" required placeholder="812..." class="flex-1 w-full p-3 border border-gray-300 rounded-r-md shadow-sm focus:ring-accent focus:border-accent">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Password -->
+                <hr class="border-t border-gray-200 my-4">
+
+                <!-- Info Akun -->
                 <div>
-                    <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="reg-password" name="password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" id="username" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" name="password" id="password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" minlength="8">
+                        <p class="mt-1 text-xs text-gray-500">Minimal 8 karakter.</p>
+                    </div>
+                    <div>
+                        <label for="konfirmasi-password" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
+                        <input type="password" name="konfirmasi_password" id="konfirmasi-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" minlength="8">
+                    </div>
                 </div>
 
-                <!-- Konfirmasi Password -->
+                <!-- Verifikasi Anti-Robot -->
                 <div>
-                    <label for="reg-konfirmasi-password" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                    <input type="password" id="reg-konfirmasi-password" name="konfirmasi_password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    <label for="register-captcha" class="block text-sm font-medium text-gray-700">Verifikasi</label>
+                    <div class="flex items-stretch mt-1">
+                        <span id="captcha-question" class="flex items-center justify-center w-28 px-4 py-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-600">...</span>
+                        <input type="number" id="register-captcha" required class="flex-1 w-full p-3 border border-gray-300 rounded-r-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Jawaban">
+                    </div>
                 </div>
 
                 <!-- Pesan Error/Sukses -->
-                <p id="form-message" class="hidden text-sm"></p>
-
+                <p id="register-message" class="hidden text-sm"></p>
+                
                 <!-- Tombol Submit -->
-                <div class="pt-4">
+                <div>
                     <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-accent to-accent-dark text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                        Daftar Sekarang
+                        Buat Akun
                     </button>
                 </div>
 
-                <!-- Link ke Login -->
-                <div class="text-center pt-4">
+                <!-- Link Login -->
+                <div class="text-center pt-2">
                     <p class="text-sm text-gray-600">
-                        Sudah punya akun? 
-                        <a href="index.html?login=true" class="font-medium text-accent hover:text-accent-dark">
-                            Masuk disini
-                        </a>
+                        Sudah punya akun? <a href="index.html?login=true" class="font-medium text-accent hover:text-accent-dark">Masuk disini</a>
                     </p>
                 </div>
             </form>
         </div>
+
     </main>
 
-    <!-- 5. FOOTER (Konsisten) -->
-    <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div class="md:col-span-2">
-                    <h4 class="text-2xl font-bold text-white mb-4">Halo KAKA</h4>
-                    <p class="text-gray-400 mb-4">Dikembangkan oleh BPS Provinsi NTB...</p>
-                    <p class="text-sm text-gray-500">&copy; 2025 BPS Provinsi NTB. All rights reserved.</p>
-                </div>
-                <div>
-                    <h5 class="text-lg font-semibold text-white mb-4">Kontak Kami</h5>
-                    <ul class="space-y-3">
-                        <li class="flex items-start">... (Jl. Dr. Soedjono No. 74) ...</li>
-                        <li class="flex items-center">... ((0370) 632315) ...</li>
-                        <li class="flex items-center">... (bps5200@bps.go.id) ...</li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="text-lg font-semibold text-white mb-4">Media Sosial</h5>
-                    <div class="flex space-x-4">
-                        <!-- Ikon Media Sosial -->
-                        <a href="#" class="text-gray-400 hover:text-white">... (Facebook) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (Instagram) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (Twitter) ...</a>
-                        <a href="#" class="text-gray-400 hover:text-white">... (YouTube) ...</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <!-- 3. FOOTER (Placeholder) -->
+    <div id="footer-placeholder">
+        <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
+            <div class="container mx-auto px-6 text-center">Memuat footer...</div>
+        </footer>
+    </div>
+    
+    <!-- 4. MODALS (Placeholder) -->
+    <div id="modals-placeholder"></div>
+    
+    <!-- 5. SCRIPT -->
+    <!-- Memuat Skrip Injeksi Komponen -->
+    <script src="js/main.js" defer></script>
+    
+    <!-- Skrip Khusus Halaman Ini -->
     <script>
-        document.getElementById('form-daftar').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        /**
+         * Fungsi ini akan dipanggil oleh main.js SETELAH
+         * semua komponen (header, footer, modals) dimuat.
+         */
+        function attachPageSpecificListeners() {
+            // Kita perlu memanggil generateCaptcha() di sini karena
+            // elemen 'captcha-question' untuk registrasi ada di halaman ini
+            // BEDA dengan 'captcha-question' di modal login.
             
-            const password = document.getElementById('reg-password').value;
-            const konfirmasi = document.getElementById('reg-konfirmasi-password').value;
-            const messageEl = document.getElementById('form-message');
-
-            // Reset message
-            messageEl.style.display = 'none';
-            messageEl.className = 'hidden text-sm';
-
-            // Validasi Sederhana: Password match
-            if (password !== konfirmasi) {
-                messageEl.innerText = 'Error: Password dan Konfirmasi Password tidak cocok.';
-                messageEl.className = 'text-sm text-red-600';
-                messageEl.style.display = 'block';
-                return;
+            // Generate captcha untuk form registrasi ini
+            // (Kita akan gunakan variabel global yg sama: captchaAnswer)
+            function generateRegisterCaptcha() {
+                captchaNum1 = Math.floor(Math.random() * 10) + 1;
+                captchaNum2 = Math.floor(Math.random() * 5) + 1;
+                captchaAnswer = captchaNum1 + captchaNum2; // Menimpa var global
+                const qEl = document.getElementById('captcha-question');
+                const aEl = document.getElementById('register-captcha');
+                if (qEl) qEl.innerText = `${captchaNum1} + ${captchaNum2} = ?`;
+                if (aEl) aEl.value = '';
             }
+            
+            // Panggil captcha saat listener dipasang
+            generateRegisterCaptcha();
 
-            // Validasi Sederhana: Panjang password
-            if (password.length < 8) {
-                messageEl.innerText = 'Error: Password minimal harus 8 karakter.';
-                messageEl.className = 'text-sm text-red-600';
-                messageEl.style.display = 'block';
-                return;
+            // --- Form Registrasi ---
+            const formRegistrasi = document.getElementById('form-registrasi');
+            const messageEl = document.getElementById('register-message');
+
+            if (formRegistrasi) {
+                formRegistrasi.addEventListener('submit', async function(e) {
+                    e.preventDefault(); 
+                    
+                    messageEl.style.display = 'none';
+                    messageEl.className = 'text-sm';
+
+                    const formData = new FormData(formRegistrasi);
+                    const data = {};
+                    formData.forEach((value, key) => { data[key] = value; });
+
+                    // 1. Validasi Password Cocok (Front-end)
+                    if (data.password !== data.konfirmasi_password) {
+                        messageEl.innerText = 'Error: Password dan Konfirmasi Password tidak cocok.';
+                        messageEl.classList.add('text-red-600');
+                        messageEl.style.display = 'block';
+                        return;
+                    }
+                    
+                    // 2. Validasi Captcha (Front-end)
+                    const userAnswer = parseInt(document.getElementById('register-captcha').value);
+                    if (userAnswer !== captchaAnswer) {
+                        messageEl.innerText = 'Error: Jawaban verifikasi salah. Silakan coba lagi.';
+                        messageEl.classList.add('text-red-600');
+                        messageEl.style.display = 'block';
+                        generateRegisterCaptcha(); // Buat soal baru
+                        return;
+                    }
+                    
+                    // Data sudah valid, kirim ke backend
+                    try {
+                        const response = await fetch('http://localhost:5000/api/auth/register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data), // Mengirim data form
+                        });
+                        
+                        const result = await response.json();
+
+                        if (response.ok) { // Status 201
+                            messageEl.innerText = result.message + ' Anda akan diarahkan ke halaman login.';
+                            messageEl.classList.add('text-green-600');
+                            messageEl.style.display = 'block';
+                            formRegistrasi.reset();
+                            
+                            // Arahkan ke halaman index + buka modal login
+                            setTimeout(() => {
+                                window.location.href = 'index.html?login=true';
+                            }, 3000);
+
+                        } else { // Status 400 atau 500
+                            messageEl.innerText = `Error: ${result.message || 'Gagal mendaftar.'}`;
+                            messageEl.classList.add('text-red-600');
+                            messageEl.style.display = 'block';
+                            generateRegisterCaptcha(); // Buat soal baru
+                        }
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                        messageEl.innerText = 'Tidak dapat terhubung ke server. Pastikan server backend berjalan.';
+                        messageEl.classList.add('text-red-600');
+                        messageEl.style.display = 'block';
+                        generateRegisterCaptcha();
+                    }
+                });
+            } else {
+                console.warn("Formulir 'form-registrasi' tidak ditemukan.");
             }
-
-            // TODO (Fase 3): Kirim data ke API Backend
-            // Tampilkan pesan sukses (simulasi)
-            messageEl.innerText = 'Registrasi berhasil! Anda akan dialihkan ke halaman login...';
-            messageEl.className = 'text-sm text-green-600';
-            messageEl.style.display = 'block';
-
-            // Kumpulkan data formulir
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            // Tambahkan +62 ke nohp
-            data.nohp = '+62' + data.nohp;
-            
-            console.log('Data Pendaftaran (untuk Fase 3):', data);
-
-            // Redirect ke halaman login setelah 2 detik
-            setTimeout(() => {
-                window.location.href = 'index.html?login=true';
-            }, 2000);
-        });
+        }
     </script>
-
+    
 </body>
 </html>

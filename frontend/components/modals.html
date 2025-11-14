@@ -1,0 +1,99 @@
+<!-- Ini adalah file parsial, hanya berisi kode untuk SEMUA modal -->
+
+<!-- 1. Modal Login -->
+<div id="modal-login" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center p-5 border-b">
+            <h3 class="text-2xl font-semibold text-gray-800">Login</h3>
+            <button onclick="closeModal('modal-login')" class="text-gray-400 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+        <!-- Body Modal Login -->
+        <form id="form-login" class="p-6 space-y-4">
+            <div>
+                <label for="login-username" class="block text-sm font-medium text-gray-700">Username atau Email</label>
+                <input type="text" id="login-username" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+            </div>
+            <div>
+                <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="login-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+            </div>
+            <!-- Perbaikan Captcha Simetris -->
+            <div>
+                <label for="login-captcha" class="block text-sm font-medium text-gray-700">Verifikasi</label>
+                <div class="flex items-stretch mt-1">
+                    <span id="login-captcha-question" class="flex items-center justify-center w-28 px-4 py-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-600">...</span>
+                    <input type="number" id="login-captcha-answer" required class="flex-1 w-full p-3 border border-gray-300 rounded-r-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Jawaban">
+                </div>
+            </div>
+            <!-- / Perbaikan Captcha Simetris -->
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <button type="button" onclick="openLupaPassword()" class="font-medium text-accent hover:text-accent-dark">Lupa password?</button>
+                </div>
+            </div>
+            <p id="login-message" class="hidden text-sm"></p>
+            <div>
+                <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-accent to-accent-dark text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">Login</button>
+            </div>
+            <div class="text-center pt-2">
+                <p class="text-sm text-gray-600">
+                    Belum punya akun? <a href="daftar.html" class="font-medium text-accent hover:text-accent-dark">Daftar disini</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 2. Modal Lupa Password -->
+<div id="modal-lupa-password" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center p-5 border-b">
+            <h3 class="text-2xl font-semibold text-gray-800">Lupa Password</h3>
+            <button onclick="closeModal('modal-lupa-password')" class="text-gray-400 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+        <!-- Body Modal Lupa Password -->
+        <form id="form-lupa-password" class="p-6 space-y-4">
+            <p class="text-sm text-gray-600">Masukkan email Anda. Kami akan mengirimkan link untuk me-reset password Anda.</p>
+            <div>
+                <label for="lupa-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="lupa-email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="email.anda@gmail.go.id">
+            </div>
+            <p id="lupa-message" class="hidden text-sm"></p>
+            <div>
+                <button type="submit" class="w-full py-3 px-6 bg-accent text-white font-bold rounded-lg shadow-lg hover:bg-accent-dark transition-all duration-300">Kirim Link Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Modal Konfirmasi Logout -->
+<div id="modal-logout-confirm" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center p-5 border-b">
+            <h3 class="text-2xl font-semibold text-gray-800">Konfirmasi Logout</h3>
+            <button onclick="closeModal('modal-logout-confirm')" class="text-gray-400 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+        <!-- Body Modal Logout -->
+        <div class="p-6">
+            <p class="text-gray-600 mb-6 text-center text-lg">Apakah Anda yakin ingin logout?</p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" onclick="closeModal('modal-logout-confirm')" class="w-full py-3 px-6 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-all duration-300">
+                    Batal
+                </button>
+                <!-- Tombol ini memanggil fungsi global 'confirmLogout' dari main.js -->
+                <button type="button" onclick="confirmLogout()" class="w-full py-3 px-6 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300">
+                    Ya
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
