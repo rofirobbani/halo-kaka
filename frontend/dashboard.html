@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pengguna - Halo KAKA</title>
+    
+    <!-- Memuat Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Konfigurasi Tailwind untuk menambahkan warna custom
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent': '#3486d9',
+                        'accent-dark': '#2a6bb0',
+                        'accent-light': '#EBF4FF',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* CSS untuk Modal */
+        .modal {
+            display: none; /* Sembunyi secara default */
+            transition: opacity 0.3s ease;
+        }
+        .modal.flex {
+            display: flex; /* Ditampilkan oleh JS */
+        }
+        
+        /* CSS untuk Hamburger (dipindahkan dari header.html agar tetap berfungsi) */
+        #menu-toggle {
+            display: none;
+        }
+        #menu-toggle:checked + label + #mobile-menu {
+            display: block;
+        }
+
+        /* Styling untuk Tab Dashboard */
+        .tab-button.active {
+            border-color: #3486d9;
+            color: #3486d9;
+            background-color: #EBF4FF;
+        }
+        .tab-content {
+            display: none; /* Sembunyi secara default */
+        }
+        .tab-content.active {
+            display: block; /* Tampilkan tab yang aktif */
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50">
+
+    <!-- 1. HEADER (Placeholder) -->
+    <div id="header-placeholder">
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="text-3xl font-bold text-accent">Halo KAKA</div>
+                <div class="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="container mx-auto px-6 py-12 md:py-16 min-h-screen">
+        
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Dashboard</h1>
+
+        <!-- Kontainer Dashboard -->
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <!-- Navigasi Tab (Menu Samping di Desktop) -->
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <div class="sticky top-28">
+                    <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wider mb-4 hidden md:block">Menu</h2>
+                    <!-- PERBAIKAN RESPONSIVE: Menambahkan 'flex-wrap' dan menghapus 'flex-shrink-0' -->
+                    <div class="flex flex-row flex-wrap md:flex-col pb-4 md:pb-0">
+                        <!-- 
+                            Button Tab: 
+                            - 'data-tab' me-link ke ID 'tab-content'
+                            - 'id' digunakan untuk menyembunyikan (role-based)
+                        -->
+                        <button data-tab="tab-penambahan" class="tab-button active flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Penambahan
+                        </button>
+                        <button data-tab="tab-laporan" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H5a2 2 0 00-2 2zm0 0h18"></path></svg>
+                            Laporan
+                        </button>
+                        <button data-tab="tab-favourite" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            Favourite
+                        </button>
+                        <!-- Tab Khusus Admin -->
+                        <button id="tab-btn-pengguna" data-tab="tab-pengguna" class="tab-button hidden items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Pengguna
+                        </button>
+                        <button id="tab-btn-kompilasi" data-tab="tab-kompilasi" class="tab-button hidden items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Kompilasi
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Konten Tab (Akan diisi bertahap) -->
+            <section class="w-full md:w-3/4 lg:w-4/5">
+                
+                <!-- Konten 1: Penambahan -->
+                <div id="tab-penambahan" class="tab-content active bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Aplikasi yang Diajukan</h2>
+                    <p class="text-gray-600">
+                        (Tahap 1: Kerangka Selesai) <br>
+                        Di sini akan tampil tabel/list aplikasi yang telah Anda ajukan melalui formulir "Daftar Aplikasi". 
+                        Anda (dan Admin) dapat memantau statusnya di sini (Misal: "Menunggu Persetujuan", "Disetujui", "Ditolak").
+                    </p>
+                    <!-- Nanti di sini akan kita isi dengan tabel data dari API -->
+                </div>
+
+                <!-- Konten 2: Laporan -->
+                <div id="tab-laporan" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Laporan Aplikasi Bermasalah</h2>
+                    <p class="text-gray-600">
+                        (Tahap 1: Kerangka Selesai) <br>
+                        Di sini akan tampil tabel berisi riwayat laporan yang telah Anda kirimkan. 
+                        Admin akan melihat semua laporan yang masuk dari semua pengguna.
+                    </p>
+                </div>
+
+                <!-- Konten 3: Favourite -->
+                <div id="tab-favourite" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Aplikasi Favourite</h2>
+                    <p class="text-gray-600">
+                        (Tahap 1: Kerangka Selesai) <br>
+                        Di sini akan tampil daftar aplikasi yang telah Anda tandai sebagai favorit di "Kolam Aplikasi". 
+                        Ini adalah *shortcut* pribadi Anda.
+                    </p>
+                </div>
+
+                <!-- Konten 4: Pengguna (Admin Only) -->
+                <div id="tab-pengguna" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Manajemen Pengguna (Admin)</h2>
+                    <p class="text-gray-600">
+                        (Tahap 1: Kerangka Selesai) <br>
+                        Halaman ini hanya terlihat oleh Admin. 
+                        Di sini Admin dapat melihat daftar semua pengguna terdaftar, mengubah *role* mereka (misal: mempromosikan 'User' menjadi 'Admin'), atau menghapus pengguna.
+                    </p>
+                </div>
+
+                <!-- Konten 5: Kompilasi (Admin Only) -->
+                <div id="tab-kompilasi" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Kompilasi Seluruh Aplikasi (Admin)</h2>
+                    <p class="text-gray-600">
+                        (Tahap 1: Kerangka Selesai) <br>
+                        Halaman ini hanya terlihat oleh Admin. 
+                        Berbeda dengan "Kolam Aplikasi" publik, di sini Admin dapat melihat **SEMUA** aplikasi, termasuk yang berstatus "Tidak Aktif" atau "Menunggu Persetjujuan". 
+                        Admin dapat mengedit atau menghapus aplikasi dari sini.
+                    </p>
+                </div>
+
+            </section>
+        </div>
+
+    </main>
+
+    <!-- 3. FOOTER (Placeholder) -->
+    <div id="footer-placeholder">
+        <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
+            <div class="container mx-auto px-6 text-center">Memuat footer...</div>
+        </footer>
+    </div>
+    
+    <!-- 4. MODALS (Placeholder) -->
+    <div id="modals-placeholder"></div>
+    
+    <!-- 5. SCRIPT -->
+    <!-- Memuat Skrip Injeksi Komponen -->
+    <script src="js/main.js" defer></script>
+    
+    <!-- Skrip Khusus Halaman Ini -->
+    <script>
+        /**
+         * Fungsi ini akan dipanggil oleh main.js SETELAH
+         * semua komponen (header, footer, modals) dimuat.
+         */
+        function attachPageSpecificListeners() {
+            
+            // --- Logika Tab Dashboard ---
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+
+                    // 1. Atur tombol
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // 2. Atur konten
+                    tabContents.forEach(content => {
+                        if (content.id === targetTab) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // --- Logika Role-Based Tab (Admin/User) ---
+            // Ambil role dari localStorage (yang disimpan oleh main.js saat login)
+            const userRole = localStorage.getItem('haloKakaUserRole');
+            console.log('Role saat ini:', userRole);
+
+
+            if (userRole === 'Admin') {
+                // Tampilkan tab khusus Admin
+                document.getElementById('tab-btn-pengguna').style.display = 'flex';
+                document.getElementById('tab-btn-kompilasi').style.display = 'flex';
+            } else {
+                // Sembunyikan tab khusus Admin (user biasa)
+                document.getElementById('tab-btn-pengguna').style.display = 'none';
+                document.getElementById('tab-btn-kompilasi').style.display = 'none';
+            }
+
+            // TODO: Tambahkan fungsi untuk memuat data untuk tab pertama
+            // loadDataPenambahan(); 
+        }
+    </script>
+</body>
+</html>

@@ -167,7 +167,7 @@
             <!-- Body Modal -->
             <div class="p-6 md:p-8 overflow-y-auto">
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8">
-                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo"></div>
+                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo"></div>
                     <div class="flex-grow">
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div><span class="block text-gray-500 font-medium">Kategori</span><span class="block text-gray-800 font-semibold" id="modal-kategori">-</span></div>
@@ -310,7 +310,7 @@
                 
                 return `
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100" onclick="openDetailModal(${app.id_app})">
-                        <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
+                        <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden">
                             ${logoHtml}
                         </div>
                         <div class="p-5">
@@ -333,7 +333,7 @@
 
                 return `
                     <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal(${app.id_app})">
-                        <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
+                        <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
                             ${logoHtml}
                         </div>
                         <div class="flex-grow mx-4">
