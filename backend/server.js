@@ -6,12 +6,13 @@ import express from 'express'; // <-- Diubah dari require
 import cors from 'cors'; // <-- Diubah dari require
 
 // Impor rute (ESM style)
-import applicationsRoutes from './routes/applications.js'; // <-- Diubah
-import reportsRoutes from './routes/reports.js'; // <-- Diubah
-import authRoutes from './routes/auth.js'; // <-- Diubah
+import applicationsRoutes from './routes/applications.js'; 
+import reportsRoutes from './routes/reports.js'; 
+import authRoutes from './routes/auth.js'; 
+import submissionRoutes from './routes/submissions.js';
 
 // Impor db (hanya untuk cek koneksi)
-import db from './config/db.js'; // <-- Diubah
+import db from './config/db.js'; 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,11 +24,14 @@ app.use(express.json()); // Mem-parsing body JSON
 // --- Rute API ---
 
 // Rute aplikasi
-app.use('/api/aplikasi', applicationsRoutes); // <-- Diubah
+app.use('/api/aplikasi', applicationsRoutes); 
 // Rute laporan
-app.use('/api/laporan', reportsRoutes); // <-- Diubah
+app.use('/api/laporan', reportsRoutes); 
 // Rute autentikasi
-app.use('/api/auth', authRoutes); // <-- Diubah
+app.use('/api/auth', authRoutes); 
+// Rute Penambahan/Submission
+app.use('/api/submissions', submissionRoutes);
+
 
 
 // Menjalankan server

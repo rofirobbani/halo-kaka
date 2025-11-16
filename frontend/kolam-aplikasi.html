@@ -32,11 +32,6 @@
     </script>
     
     <style>
-        /* Animasi smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
         /* CSS untuk Modal (diperlukan untuk SEMUA modal) */
         .modal {
             display: none; /* Sembunyi secara default */
@@ -65,6 +60,33 @@
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Styling untuk Tombol Pagination */
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #D1D5DB; /* border-gray-300 */
+        }
+        .page-btn.active {
+            background-color: #3486d9; /* bg-accent */
+            color: white;
+            border-color: #3486d9;
+        }
+        .page-btn:not(.active):not(:disabled) {
+            background-color: white;
+            color: #3F3F46; /* text-gray-700 */
+        }
+        .page-btn:not(.active):not(:disabled):hover {
+            background-color: #F9FAFB; /* bg-gray-50 */
+        }
+        .page-btn:disabled {
+            background-color: #F3F4F6; /* bg-gray-100 */
+            color: #9CA3AF; /* text-gray-400 */
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -128,14 +150,18 @@
         </div>
 
         <!-- Kontrol Tampilan (Grid/List) -->
-        <div class="flex justify-end items-center mb-4">
-            <span class="text-sm text-gray-600 mr-3">Tampilan:</span>
-            <button id="view-grid" class="p-2 rounded-lg bg-accent-light text-accent mr-2">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-            </button>
-            <button id="view-list" class="p-2 rounded-lg bg-gray-200 text-gray-600">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-            </button>
+        <div class="flex justify-between items-center mb-4">
+            <!-- Teks info halaman -->
+            <p id="page-info" class="text-sm text-gray-600">Menampilkan 0 dari 0 aplikasi</p>
+            <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-600 mr-1 hidden sm:block">Tampilan:</span>
+                <button id="view-grid" class="p-2 rounded-lg bg-accent-light text-accent mr-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                </button>
+                <button id="view-list" class="p-2 rounded-lg bg-gray-200 text-gray-600">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
         </div>
 
         <!-- Kontainer Aplikasi (Grid/List) -->
@@ -145,18 +171,26 @@
         </div>
         <div id="error-container" class="hidden text-center py-16">
             <p class="text-xl text-red-600 font-semibold">Gagal Memuat Aplikasi!</p>
-            <p class="text-gray-600 mt-2">Tidak dapat terhubung ke server. Pastikan server backend Anda (npm run dev) sudah berjalan dan coba refresh halaman ini.</p>
+            <p id="error-message" class="text-gray-600 mt-2">Tidak dapat terhubung ke server.</p>
         </div>
+        
+        <!-- Kontainer ini sekarang hanya akan menampilkan 10 item -->
         <div id="aplikasi-container" class="hidden">
             <!-- Konten diisi oleh JS -->
         </div>
         <p id="no-results" class="hidden text-center text-gray-500 py-12">Tidak ada aplikasi yang ditemukan.</p>
+
+        <!-- Kontrol Pagination -->
+        <div id="pagination-controls" class="flex justify-center items-center space-x-2 mt-12">
+            <!-- Tombol-tombol akan di-generate oleh JavaScript -->
+        </div>
+
     </main>
 
     <!-- Modal Detail Aplikasi (Spesifik halaman ini) -->
     <div id="modal-detail" class="modal fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Header Modal -->
+            <!-- Modal Header -->
             <div class="flex justify-between items-center p-5 border-b">
                 <h3 class="text-2xl font-semibold text-gray-800" id="modal-nama">Nama Aplikasi</h3>
                 <!-- Menggunakan fungsi closeModal() global dari main.js -->
@@ -164,7 +198,7 @@
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-            <!-- Body Modal -->
+            <!-- Modal Body -->
             <div class="p-6 md:p-8 overflow-y-auto">
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8">
                     <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo"></div>
@@ -240,18 +274,18 @@
         </div>
     </div>
 
-    <!-- 5. FOOTER (Placeholder) -->
+    <!-- 3. FOOTER (Placeholder) -->
     <div id="footer-placeholder">
         <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
             <div class="container mx-auto px-6 text-center">Memuat footer...</div>
         </footer>
     </div>
     
-    <!-- 6. MODALS (Placeholder) -->
+    <!-- 4. MODALS (Placeholder) -->
     <!-- Kode modal login & lupa password akan dimuat oleh js/main.js ke sini -->
     <div id="modals-placeholder"></div>
     
-    <!-- 7. SCRIPT -->
+    <!-- 5. SCRIPT -->
     <!-- Memuat Skrip Injeksi Komponen yang BARU -->
     <script src="js/main.js" defer></script>
 
@@ -262,10 +296,15 @@
          * semua komponen (header, footer, modals) dimuat.
          */
         function attachPageSpecificListeners() {
+            
             // --- State Global (Spesifik Halaman) ---
-            let aplikasiDatabase = []; // Akan diisi oleh API
-            let filteredAplikasi = [];
+            let aplikasiDatabase = []; // Database lengkap dari API
+            let filteredAplikasi = []; // Database setelah difilter
             let currentView = 'grid'; // 'grid' atau 'list'
+            
+            // --- State untuk Pagination ---
+            let currentPage = 1;
+            const itemsPerPage = 10; // Menampilkan 10 item per halaman
 
             // --- Elemen DOM (Spesifik Halaman) ---
             const container = document.getElementById('aplikasi-container');
@@ -279,34 +318,67 @@
             const viewListBtn = document.getElementById('view-list');
             const loadingContainer = document.getElementById('loading-container');
             const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message'); // Ditambahkan
+            
+            // Elemen Pagination
+            const paginationContainer = document.getElementById('pagination-controls');
+            const pageInfo = document.getElementById('page-info');
 
-            // --- Fungsi Render Tampilan ---
-            function renderAplikasi(aplikasiArray, view) {
-                if (!container) return; // Guard clause
-                container.innerHTML = ''; 
+            // --- Fungsi Render Tampilan (DIPERBARUI) ---
+            
+            /**
+             * Fungsi Render Utama (Diperbarui untuk Pagination)
+             * @param {string} view - 'grid' atau 'list'
+             */
+            function renderAplikasi(view) {
+                if (!container) return; 
                 
-                if (aplikasiArray.length === 0) {
+                container.innerHTML = ''; // Kosongkan kontainer
+                
+                const totalFiltered = filteredAplikasi.length;
+
+                if (totalFiltered === 0) {
                     noResults.style.display = 'block';
                     container.style.display = 'none';
+                    pageInfo.innerText = "Menampilkan 0 dari 0 aplikasi";
+                    setupPagination(0); // Sembunyikan tombol pagination
                     return;
                 }
                 
                 noResults.style.display = 'none';
                 container.style.display = 'grid'; 
                 
+                // --- LOGIKA PAGINATION ---
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const itemsToRender = filteredAplikasi.slice(startIndex, endIndex);
+                // --- AKHIR LOGIKA PAGINATION ---
+
+                // Update info halaman
+                const endInfo = Math.min(endIndex, totalFiltered);
+                pageInfo.innerText = `Menampilkan ${startIndex + 1}-${endInfo} dari ${totalFiltered} aplikasi`;
+
+                // Atur layout (grid/list)
                 if (view === 'grid') {
                     container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-                    aplikasiArray.forEach(app => { container.innerHTML += renderGrid(app); });
+                    itemsToRender.forEach(app => { container.innerHTML += renderGrid(app); });
                 } else {
                     container.className = 'bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200';
-                    aplikasiArray.forEach(app => { container.innerHTML += renderList(app); });
+                    itemsToRender.forEach(app => { container.innerHTML += renderList(app); });
                 }
+
+                // Panggil fungsi untuk membuat tombol pagination
+                setupPagination(totalFiltered);
             }
 
+            /**
+             * PERBAIKAN: Mengembalikan fungsi renderGrid lengkap
+             */
             function renderGrid(app) {
-                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
+                    ? app.logo 
                     : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
-                    : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
+                    : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
                 
                 return `
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100" onclick="openDetailModal(${app.id_app})">
@@ -315,19 +387,23 @@
                         </div>
                         <div class="p-5">
                             <h3 class="text-xl font-semibold text-gray-800 mb-1 truncate" title="${app.nama}">${app.nama}</h3>
-                            <span class="text-sm text-accent mb-3 block">${app.kategori}</span>
+                            <span class="text-sm text-accent mb-3 block">${app.kategori || ''}</span>
                             <div class="flex justify-between items-center">
-                                <span class="text-xs font-medium text-gray-600 truncate" title="${app.developer}">${app.developer}</span>
+                                <span class="text-xs font-medium text-gray-600 truncate" title="${app.developer}">${app.developer || ''}</span>
                                 <span class="text-xs px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                    ${app.status_aplikasi}
+                                    ${app.status_aplikasi || 'N/A'}
                                 </span>
                             </div>
                         </div>
                     </div>`;
             }
 
+            /**
+             * PERBAIKAN: Mengembalikan fungsi renderList lengkap
+             */
             function renderList(app) {
-                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
+                    ? app.logo 
                     : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
                     : `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
 
@@ -336,15 +412,15 @@
                         <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
                             ${logoHtml}
                         </div>
-                        <div class="flex-grow mx-4">
-                            <h3 class="text-lg font-semibold text-gray-800">${app.nama}</h3>
-                            <p class="text-sm text-gray-500">${app.kategori} | ${app.developer}</p>
+                        <div class="flex-grow mx-4 min-w-0">
+                            <h3 class="text-lg font-semibold text-gray-800 truncate" title="${app.nama}">${app.nama}</h3>
+                            <p class="text-sm text-gray-500 truncate">${app.kategori || ''} | ${app.developer || ''}</p>
                         </div>
-                        <div class="flex-shrink-0 flex items-center space-x-4">
-                            <span class="text-sm px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${app.status_aplikasi}
+                        <div class="flex-shrink-0 flex items-center space-x-4 ml-auto">
+                            <span class="hidden sm:inline-block text-sm px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                ${app.status_aplikasi || 'N/A'}
                             </span>
-                            <a href="${app.link}" target="_blank" onclick="(e) => e.stopPropagation()" class="hidden md:inline-block bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition duration-300">
+                            <a href="${app.link || '#'}" target="_blank" onclick="(e) => e.stopPropagation()" class="hidden md:inline-block bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition duration-300">
                                 Open
                             </a>
                             <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
@@ -352,8 +428,11 @@
                     </div>`;
             }
 
-            // --- Fungsi Filter dan Pencarian ---
+
+            // --- Fungsi Filter dan Pencarian (Diperbarui) ---
             function applyFilters() {
+                currentPage = 1; // Reset ke halaman 1
+
                 const query = searchInput.value.toLowerCase();
                 const kategoriFilter = filterKategori.value;
                 const developerFilter = filterDeveloper.value;
@@ -372,7 +451,8 @@
                     
                     return matchesQuery && matchesKategori && matchesDeveloper && matchesTahun && matchesStatus;
                 });
-                renderAplikasi(filteredAplikasi, currentView);
+                
+                renderAplikasi(currentView);
             }
 
             // --- Fungsi Inisialisasi ---
@@ -382,6 +462,7 @@
                 const tahunSet = new Set(aplikasiArray.map(app => app.tahun_buat).filter(Boolean));
                 const statusSet = new Set(aplikasiArray.map(app => app.status_aplikasi).filter(Boolean));
 
+                // Kosongkan filter sebelum mengisi
                 filterKategori.innerHTML = '<option value="">Semua Kategori</option>';
                 filterDeveloper.innerHTML = '<option value="">Semua Developer</option>';
                 filterTahun.innerHTML = '<option value="">Semua Tahun</option>';
@@ -393,15 +474,57 @@
                 statusSet.forEach(item => { filterStatus.innerHTML += `<option value="${item}">${item}</option>`; });
             }
             
-            // --- Fungsi Logika Modal (Spesifik Halaman) ---
+            // --- Fungsi Setup Pagination ---
             
-            // Definisikan 'openDetailModal' secara global agar bisa diakses onclick
-            // Kita harus menempelkannya ke 'window' karena skrip ini ada di dalam fungsi
+            function setupPagination(totalItems) {
+                if (!paginationContainer) return;
+                paginationContainer.innerHTML = ''; 
+
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                if (totalPages <= 1) return; // Sembunyikan jika hanya 1 halaman
+
+                // Tombol "Previous"
+                paginationContainer.innerHTML += `
+                    <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        &laquo; Prev
+                    </button>
+                `;
+
+                // Tombol Halaman (misal: 1, 2, 3...)
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationContainer.innerHTML += `
+                        <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                // Tombol "Next"
+                paginationContainer.innerHTML += `
+                    <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Next &raquo;
+                    </button>
+                `;
+            }
+
+            // Dibuat global agar bisa diakses onclick
+            window.changePage = function(page) {
+                currentPage = page;
+                renderAplikasi(currentView);
+                // Scroll ke atas list
+                document.getElementById('aplikasi-container').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+
+            // Dibuat global agar bisa diakses onclick
             window.openDetailModal = function(id) {
                 const app = aplikasiDatabase.find(app => app.id_app == id);
                 if (!app) return;
 
-                const logoHtml = (app.logo && app.logo.startsWith('<svg')) ? app.logo 
+                const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
+                    ? app.logo.replace('w-10 h-10', 'w-24 h-24').replace('w-16 h-16', 'w-24 h-24') 
                     : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
                     : `<svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
                 
@@ -414,7 +537,7 @@
                 document.getElementById('modal-narahubung').innerText = app.narahubung || '-';
                 document.getElementById('modal-pengunjung').innerText = app.jumlah_pengunjung || '0';
                 document.getElementById('modal-penjelasan').innerText = app.penjelasan || 'Tidak ada penjelasan.';
-                document.getElementById('modal-link').href = app.link;
+                document.getElementById('modal-link').href = app.link || '#';
 
                 document.getElementById('report-id-app').value = app.id_app;
                 document.getElementById('report-nama-app').value = app.nama;
@@ -423,6 +546,9 @@
                 // Gunakan fungsi modal global dari main.js
                 openModal('modal-detail');
             };
+            
+            // PERBAIKAN: Tambahkan titik koma di sini untuk menghindari TypeError
+            ;
 
             // --- Event Listener Utama (diekseskusi oleh main.js) ---
             
@@ -434,7 +560,6 @@
                     container.style.display = 'none';
 
                     const response = await fetch('http://localhost:5000/api/aplikasi');
-                    
                     if (!response.ok) {
                         throw new Error(`Gagal mengambil data: ${response.statusText}`);
                     }
@@ -453,15 +578,17 @@
                     
                     if (searchQuery) {
                         searchInput.value = searchQuery; 
-                        applyFilters(); 
+                        applyFilters(); // applyFilters akan memanggil renderAplikasi
                     } else {
-                        renderAplikasi(aplikasiDatabase, currentView); 
+                        renderAplikasi(currentView); // Tampilkan halaman pertama
                     }
 
                 } catch (error) {
                     console.error('Gagal memuat aplikasi:', error);
                     loadingContainer.style.display = 'none';
                     errorContainer.style.display = 'block';
+                    // Tampilkan pesan error yang lebih jelas
+                    document.getElementById('error-message').innerText = `Error: ${error.message}. Pastikan server backend Anda (npm run dev) sudah berjalan.`;
                 }
             })();
 
@@ -470,6 +597,7 @@
             let searchTimeout;
             searchInput.addEventListener('input', () => {
                 clearTimeout(searchTimeout);
+                // Debounce: Tunda pencarian 300ms setelah user berhenti mengetik
                 searchTimeout = setTimeout(applyFilters, 300); 
             });
 
@@ -485,7 +613,7 @@
                 viewGridBtn.classList.remove('bg-gray-200', 'text-gray-600');
                 viewListBtn.classList.add('bg-gray-200', 'text-gray-600');
                 viewListBtn.classList.remove('bg-accent-light', 'text-accent');
-                renderAplikasi(filteredAplikasi, currentView);
+                renderAplikasi(currentView);
             });
 
             viewListBtn.addEventListener('click', () => {
@@ -494,7 +622,7 @@
                 viewListBtn.classList.remove('bg-gray-200', 'text-gray-600');
                 viewGridBtn.classList.add('bg-gray-200', 'text-gray-600');
                 viewGridBtn.classList.remove('bg-accent-light', 'text-accent');
-                renderAplikasi(filteredAplikasi, currentView);
+                renderAplikasi(currentView);
             });
 
             // 4. Pasang Listener Form Laporan

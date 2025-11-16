@@ -24,7 +24,7 @@ export const getAllAplikasi = async (req, res) => {
  */
 export const submitAplikasi = async (req, res) => {
   try {
-    // Ambil data dari body request
+    // Ambil data dari body request (dari form di index.html)
     const { nama, kategori, penjelasan, link, narahubung, developer, tahun_buat } = req.body;
 
     // Validasi sederhana
@@ -32,16 +32,22 @@ export const submitAplikasi = async (req, res) => {
       return res.status(400).json({ message: 'Data yang diperlukan kurang lengkap (Nama, Link, Developer, Tahun)' });
     }
 
-    // Masukkan ke tabel 'add_apps' (tabel pengajuan)
+    // --- PERBAIKAN ---
+    // Menyesuaikan kueri INSERT dengan skema DB terbaru di 'fase1_setup.md'
+    // 'id_app' dan 'logo' akan NULL by default.
+    // 'id_user_pengaju' adalah NULL karena ini adalah form publik (tidak login).
     const [result] = await db.query(
-      'INSERT INTO add_apps (nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, status_aplikasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, 'Menunggu Persetujuan']
+      `INSERT INTO add_apps 
+         (nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, status_aplikasi, id_user_pengaju) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, 'Menunggu Persetujuan', null]
     );
+    // --- AKHIR PERBAIKAN ---
 
     res.status(201).json({ message: 'Aplikasi berhasil diajukan!', id: result.insertId });
 
   } catch (error) {
     console.error('Error saat submit aplikasi:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+    res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
   }
 };
