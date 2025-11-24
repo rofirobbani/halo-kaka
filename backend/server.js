@@ -10,6 +10,8 @@ import applicationsRoutes from './routes/applications.js';
 import reportsRoutes from './routes/reports.js'; 
 import authRoutes from './routes/auth.js'; 
 import submissionRoutes from './routes/submissions.js';
+import userRoutes from './routes/users.js';
+import compilationRoutes from './routes/compilations.js';
 
 // Impor db (hanya untuk cek koneksi)
 import db from './config/db.js'; 
@@ -31,6 +33,10 @@ app.use('/api/laporan', reportsRoutes);
 app.use('/api/auth', authRoutes); 
 // Rute Penambahan/Submission
 app.use('/api/submissions', submissionRoutes);
+// Rute Penambahan/Users
+app.use('/api/users', userRoutes);
+// Rute Penambahan/kompilasi
+app.use('/api/kompilasi', compilationRoutes); 
 
 
 

@@ -5,35 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pengguna - Halo KAKA</title>
     
-    <!-- (CSS <head> Anda tetap sama seperti sebelumnya) -->
+    <!-- Memuat Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Google Font (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
+        // Konfigurasi Tailwind untuk menambahkan warna custom
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {'accent': '#3486d9', 'accent-dark': '#2a6bb0', 'accent-light': '#EBF4FF'},
-                    fontFamily: {'sans': ['Inter', 'sans-serif']}
+                    colors: {
+                        'accent': '#3486d9',
+                        'accent-dark': '#2a6bb0',
+                        'accent-light': '#EBF4FF',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    }
                 }
             }
         }
     </script>
+    
     <style>
-        .modal { display: none; transition: opacity 0.3s ease; }
-        .modal.flex { display: flex; }
-        #menu-toggle { display: none; }
-        #menu-toggle:checked + label + #mobile-menu { display: block; }
-        .tab-button.active { border-color: #3486d9; color: #3486d9; background-color: #EBF4FF; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        /* CSS untuk Modal */
+        .modal {
+            display: none; /* Sembunyi secara default */
+            transition: opacity 0.3s ease;
+        }
+        .modal.flex {
+            display: flex; /* Ditampilkan oleh JS */
+        }
+        
+        /* CSS untuk Hamburger (dipindahkan dari header.html agar tetap berfungsi) */
+        #menu-toggle {
+            display: none;
+        }
+        #menu-toggle:checked + label + #mobile-menu {
+            display: block;
+        }
+
+        /* Styling untuk Tab Dashboard */
+        .tab-button.active {
+            border-color: #3486d9;
+            color: #3486d9;
+            background-color: #EBF4FF;
+        }
+        .tab-content {
+            display: none; /* Sembunyi secara default */
+        }
+        .tab-content.active {
+            display: block; /* Tampilkan tab yang aktif */
+        }
+        
+        /* Styling Pagination Global untuk Dashboard */
+        .page-btn { 
+            padding: 0.5rem 1rem; 
+            border-radius: 0.5rem; 
+            font-weight: 500; 
+            transition: all 0.2s ease; 
+            border: 1px solid #D1D5DB; 
+            margin: 0 2px;
+        }
+        .page-btn.active { 
+            background-color: #3486d9; 
+            color: white; 
+            border-color: #3486d9; 
+        }
+        .page-btn:not(.active):not(:disabled) { 
+            background-color: white; 
+            color: #3F3F46; 
+        }
+        .page-btn:not(.active):not(:disabled):hover { 
+            background-color: #F9FAFB; 
+        }
+        .page-btn:disabled { 
+            background-color: #F3F4F6; 
+            color: #9CA3AF; 
+            cursor: not-allowed; 
+        }
     </style>
 </head>
 <body class="font-sans text-gray-800 bg-gray-50">
 
     <!-- 1. HEADER (Placeholder) -->
     <div id="header-placeholder">
-        <!-- ... (Header dimuat oleh main.js) ... -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="text-3xl font-bold text-accent">Halo KAKA</div>
+                <div class="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </nav>
+        </header>
     </div>
 
     <main class="container mx-auto px-6 py-12 md:py-16 min-h-screen">
@@ -47,54 +113,64 @@
             <aside class="w-full md:w-1/4 lg:w-1/5">
                 <div class="sticky top-28">
                     <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wider mb-4 hidden md:block">Menu</h2>
-                    <!-- PERBAIKAN RESPONSIVE: Menambahkan 'flex-wrap' -->
                     <div class="flex flex-row flex-wrap md:flex-col pb-4 md:pb-0">
-                        <!-- 
-                            Button Tab: 
-                            - 'data-tab' me-link ke ID 'tab-content'
-                            - 'id' digunakan untuk menyembunyikan (role-based)
-                        -->
+                        <!-- Tab Penambahan -->
                         <button data-tab="tab-penambahan" class="tab-button active flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Penambahan
                         </button>
+                        <!-- Tab Laporan -->
                         <button data-tab="tab-laporan" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H5a2 2 0 00-2 2zm0 0h18"></path></svg>
                             Laporan
                         </button>
+                        <!-- Tab Favourite -->
                         <button data-tab="tab-favourite" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             Favourite
                         </button>
+                        
                         <!-- Tab Khusus Admin -->
-                        <button id="tab-btn-pengguna" data-tab="tab-pengguna" class="tab-button flex hidden items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                        <button id="tab-btn-pengguna" data-tab="tab-pengguna" class="tab-button hidden flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Pengguna
                         </button>
-                        <button id="tab-btn-kompilasi" data-tab="tab-kompilasi" class="tab-button flex hidden items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                        <button id="tab-btn-kompilasi" data-tab="tab-kompilasi" class="tab-button hidden flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                             Kompilasi
                         </button>
                     </div>
                 </div>
             </aside>
-            <!-- Konten Tab (Placeholder HTML) -->
+
+            <!-- Konten Tab (Akan diisi bertahap) -->
             <section class="w-full md:w-3/4 lg:w-4/5">
+                
+                <!-- Konten 1: Penambahan -->
                 <div id="tab-penambahan" class="tab-content active bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten penambahan...</p>
                 </div>
+
+                <!-- Konten 2: Laporan -->
                 <div id="tab-laporan" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten laporan...</p>
                 </div>
+
+                <!-- Konten 3: Favourite -->
                 <div id="tab-favourite" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten favorit...</p>
                 </div>
+
+                <!-- Konten 4: Pengguna (Admin Only) -->
                 <div id="tab-pengguna" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten pengguna...</p>
                 </div>
+
+                <!-- Konten 5: Kompilasi (Admin Only) -->
                 <div id="tab-kompilasi" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten kompilasi...</p>
                 </div>
+
             </section>
         </div>
 
@@ -102,7 +178,9 @@
 
     <!-- 3. FOOTER (Placeholder) -->
     <div id="footer-placeholder">
-        <!-- ... (Footer dimuat oleh main.js) ... -->
+        <footer class="bg-gray-900 text-gray-300 pt-20 pb-10">
+            <div class="container mx-auto px-6 text-center">Memuat footer...</div>
+        </footer>
     </div>
     
     <!-- 4. MODALS (Placeholder) -->
@@ -121,34 +199,42 @@
         function attachPageSpecificListeners() {
             
             // --- BARU: PENJAGA HALAMAN (Page Guard) ---
-            // Cek token SEBELUM melakukan hal lain
             const token = localStorage.getItem('haloKakaToken');
             if (!token) {
-                // Jika tidak ada token, jangan muat halaman ini.
-                // Tampilkan peringatan dan paksa kembali ke index.
-                // alert('Anda harus login untuk mengakses halaman dashboard.');
-                window.location.href = 'index.html';
-                
-                // Hentikan eksekusi sisa skrip di halaman ini
-                // Sembunyikan konten agar tidak "flash"
+                alert('Anda harus login untuk mengakses halaman dashboard.');
+                window.location.href = 'index.html?login=true';
                 document.querySelector('main').style.display = 'none';
                 return; 
             }
-            // --- AKHIR PENJAGA HALAMAN ---
-
             
-            // --- Variabel Global Halaman ---
             const userRole = localStorage.getItem('haloKakaUserRole');
+            
+            // --- VARIABLE UNTUK MELACAK SKRIP YANG SUDAH DIMUAT ---
+            const loadedScripts = new Set();
 
-            // --- Helper function untuk memuat Skrip JS secara dinamis ---
-            // (Kita tambahkan ini agar bisa memuat file .js)
+            // --- Helper function: Muat Script hanya jika belum ada ---
             function loadScript(filePath) {
                 return new Promise((resolve, reject) => {
+                    // 1. Cek apakah skrip sudah pernah dimuat
+                    if (loadedScripts.has(filePath)) {
+                        //console.log(`Skrip ${filePath} sudah ada, melewati muat ulang.`);
+                        resolve(); // Langsung resolve tanpa error
+                        return;
+                    }
+                    
+                    // 2. Cek juga di DOM (jaga-jaga)
+                    if (document.querySelector(`script[src="${filePath}"]`)) {
+                        loadedScripts.add(filePath);
+                        resolve();
+                        return;
+                    }
+
                     const script = document.createElement('script');
                     script.src = filePath;
                     script.defer = true;
                     script.onload = () => {
                         console.log(`Skrip ${filePath} berhasil dimuat.`);
+                        loadedScripts.add(filePath); // Tandai sudah dimuat
                         resolve();
                     };
                     script.onerror = () => reject(new Error(`Gagal memuat skrip: ${filePath}`));
@@ -156,36 +242,51 @@
                 });
             }
 
-            // --- Helper function untuk memuat KONTEN TAB (HTML & JS) ---
             async function loadTabContent(tabId, htmlPath, jsPath) {
                 const placeholder = document.getElementById(tabId);
                 if (!placeholder || placeholder.classList.contains('hidden')) {
-                    return; // Lewati jika placeholder tidak ada atau disembunyikan
+                    return; 
                 } 
                 
                 try {
-                    // 1. Muat HTML-nya dulu
+                    // 1. Muat HTML (Selalu replace konten HTML untuk reset tampilan)
                     const response = await fetch(htmlPath);
                     if (!response.ok) throw new Error(`File not found: ${htmlPath}`);
                     const html = await response.text();
                     placeholder.innerHTML = html;
                     
-                    // 2. Muat JS-nya
-                    await loadScript(jsPath);
+                    // 2. Muat JS (Hanya jika belum dimuat)
+                    if (jsPath) await loadScript(jsPath);
                     
-                    // 3. Panggil fungsi init dari file JS yang baru dimuat
-                    if (tabId === 'tab-penambahan') {
-                        if (typeof initTabPenambahan === 'function') initTabPenambahan();
+                    // 3. Panggil fungsi init dari file JS
+                    // Fungsi init harus dirancang agar aman dipanggil berkali-kali
+                    if (tabId === 'tab-penambahan' && typeof initTabPenambahan === 'function') {
+                        initTabPenambahan();
                     }
-                    // if (tabId === 'tab-laporan') { initTabLaporan(); } 
+                    if (tabId === 'tab-laporan' && typeof initTabLaporan === 'function') { 
+                        initTabLaporan(); 
+                    } 
+                    if (tabId === 'tab-favourite' && typeof initTabFavourite === 'function') {
+                        initTabFavourite();
+                    }
+                    // Tab Admin
+                    if (tabId === 'tab-pengguna') {
+                        if (typeof window.initTabPengguna === 'function') {
+                            window.initTabPengguna();
+                        } else {
+                            console.error("Fungsi 'initTabPengguna' tidak ditemukan. Pastikan tab_pengguna.js termuat.");
+                        }
+                    }
+                    if (tabId === 'tab-kompilasi' && typeof initTabKompilasi === 'function') {
+                        initTabKompilasi();
+                    }
                     
                 } catch (error) {
-                    console.error(`Gagal memuat ${filePath}:`, error);
+                    console.error(`Gagal memuat tab ${tabId}:`, error);
                     placeholder.innerHTML = `<p class="text-red-500">Gagal memuat konten tab.</p>`;
                 }
             }
 
-            // --- Fungsi Utama untuk Halaman Dashboard ---
             async function initializeDashboard() {
                 // 1. Tampilkan/Sembunyikan Tombol Tab berdasarkan Role
                 const tabBtnPengguna = document.getElementById('tab-btn-pengguna');
@@ -196,30 +297,33 @@
                 if (userRole === 'Admin') {
                     tabBtnPengguna.classList.remove('hidden');
                     tabBtnKompilasi.classList.remove('hidden');
+                    tabBtnPengguna.classList.add('flex');
+                    tabBtnKompilasi.classList.add('flex');
                 } else {
                     tabBtnPengguna.classList.add('hidden');
                     tabBtnKompilasi.classList.add('hidden');
+                    tabBtnPengguna.classList.remove('flex');
+                    tabBtnKompilasi.classList.remove('flex');
+
                     if(tabPengguna) tabPengguna.classList.add('hidden'); 
                     if(tabKompilasi) tabKompilasi.classList.add('hidden');
                 }
 
-                // 2. Muat Konten Tab secara Paralel
-                // PERHATIKAN: Kita sekarang menambahkan path ke file .js
+                // 2. Daftar Tab yang akan dimuat
                 const tabPromises = [
                     loadTabContent('tab-penambahan', 'components/dashboard/tab_penambahan.html', 'js/tabs/tab_penambahan.js'),
-                    // loadTabContent('tab-laporan', 'components/dashboard/tab_laporan.html', 'js/tabs/tab_laporan.js'),
-                    // loadTabContent('tab-favourite', 'components/dashboard/tab_favourite.html', 'js/tabs/tab_favourite.js')
+                    loadTabContent('tab-laporan', 'components/dashboard/tab_laporan.html', 'js/tabs/tab_laporan.js'),
+                    loadTabContent('tab-favourite', 'components/dashboard/tab_favourite.html', 'js/tabs/tab_favourite.js')
                 ];
                 
                 if (userRole === 'Admin') {
-                    // tabPromises.push(loadTabContent('tab-pengguna', 'components/dashboard/tab_pengguna.html', 'js/tabs/tab_pengguna.js'));
-                    // tabPromises.push(loadTabContent('tab-kompilasi', 'components/dashboard/tab_kompilasi.html', 'js/tabs/tab_kompilasi.js'));
+                    tabPromises.push(loadTabContent('tab-pengguna', 'components/dashboard/tab_pengguna.html', 'js/tabs/tab_pengguna.js'));
+                    tabPromises.push(loadTabContent('tab-kompilasi', 'components/dashboard/tab_kompilasi.html', 'js/tabs/tab_kompilasi.js'));
                 }
 
-                // (Saya hanya mengaktifkan 'tab_penambahan' untuk saat ini agar sesuai dengan file baru yang kita buat)
                 await Promise.all(tabPromises);
 
-                // 3. Pasang listener untuk Pindah Tab
+                // 3. Pasang listener Pindah Tab
                 const tabButtons = document.querySelectorAll('.tab-button');
                 const tabContents = document.querySelectorAll('.tab-content');
 
@@ -238,7 +342,6 @@
                 });
             }
 
-            // --- Mulai Inisialisasi Dashboard ---
             initializeDashboard();
         }
     </script>

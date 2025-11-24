@@ -1,7 +1,6 @@
 <!-- Konten untuk Tab Penambahan -->
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold text-gray-800">Aplikasi yang Diajukan</h2>
-    <!-- Tombol Tambah (sekarang fungsional) -->
     <button id="btn-tambah-aplikasi" class="bg-accent text-white px-4 py-2 rounded-lg font-medium hover:bg-accent-dark transition duration-300 flex items-center">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
         Tambah Aplikasi
@@ -12,23 +11,16 @@
     Daftar aplikasi yang Anda ajukan untuk ditinjau oleh Admin.
 </p>
 
-<!-- BARU: Filter dan Pencarian untuk Tab -->
+<!-- Filter dan Pencarian -->
 <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white rounded-lg shadow">
     <div class="md:col-span-2">
-        <!-- PERUBAHAN: Label diganti -->
         <label for="penambahan-search" class="block text-sm font-medium text-gray-700">Cari di Semua Kolom</label>
-        
-        <!-- PERUBAHAN: Menambahkan div relative dan ikon SVG -->
         <div class="relative mt-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <input type="text" id="penambahan-search" class="block w-full p-2 pl-10 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Ketik nama, kategori, developer, dll...">
         </div>
-        <!-- AKHIR PERUBAHAN -->
-
     </div>
     <div>
         <label for="penambahan-filter-status" class="block text-sm font-medium text-gray-700">Status Pengajuan</label>
@@ -40,111 +32,101 @@
         </select>
     </div>
 </div>
-<!-- AKHIR BARU -->
-
 
 <!-- Info Paginasi -->
 <div id="penambahan-info-bar" class="flex justify-between items-center mb-4">
     <p id="penambahan-page-info" class="text-sm text-gray-600">Menampilkan 0 dari 0 aplikasi</p>
-    <!-- Anda bisa menambahkan filter khusus tab di sini nanti -->
 </div>
 
-<!-- Kontainer untuk Tabel -->
-<div id="penambahan-loading" class="text-center p-4">
-    <p class="text-gray-500">Memuat data...</p>
-</div>
+<!-- Tabel -->
+<div id="penambahan-loading" class="text-center p-4"><p class="text-gray-500">Memuat data...</p></div>
 <p id="penambahan-no-data" class="hidden text-gray-600 p-4 bg-white rounded-lg shadow">Anda belum mengajukan aplikasi apapun.</p>
 <p id="penambahan-error" class="hidden text-red-600 p-4 bg-red-100 rounded-lg"></p>
 
-<!-- Tabel Data (Akan diisi oleh JS) -->
 <div id="penambahan-table-container" class="hidden overflow-x-auto bg-white rounded-xl shadow-lg">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
             <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aplikasi</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Developer</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Pengajuan</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aplikasi</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Developer</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Pengajuan</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
             </tr>
         </thead>
-        <tbody id="penambahan-table-body" class="bg-white divide-y divide-gray-200">
-            <!-- Baris data di-generate oleh tab_penambahan.js -->
-        </tbody>
+        <tbody id="penambahan-table-body" class="bg-white divide-y divide-gray-200"></tbody>
     </table>
 </div>
 
-<!-- Kontrol Pagination -->
-<div id="penambahan-pagination" class="flex justify-center items-center space-x-2 mt-6">
-    <!-- Tombol-tombol pagination akan di-generate oleh JS di sini -->
-</div>
-
+<div id="penambahan-pagination" class="flex justify-center items-center space-x-2 mt-6"></div>
 
 <!-- =================================================== -->
-<!-- BARU: MODAL UNTUK TAB PENAMBAHAN -->
+<!-- MODAL DENGAN STRUKTUR FLEXBOX (SCROLLABLE CONTENT) -->
 <!-- =================================================== -->
 
 <!-- 1. Modal Tambah / Edit Aplikasi -->
-<div id="modal-add-edit" class="modal fixed inset-0 z-[60] overflow-y-auto bg-black bg-opacity-60 items-center justify-center p-4">
+<div id="modal-add-edit" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+    <!-- Container Modal: Flex Col + Max Height -->
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <form id="form-add-edit">
-            <!-- Header Modal -->
-            <div class="flex justify-between items-center p-5 border-b sticky top-0 bg-white">
+        <form id="form-add-edit" class="flex flex-col h-full">
+            <input type="hidden" id="edit-app-id" name="id_add_app">
+            
+            <!-- HEADER: Sticky Top -->
+            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg flex-shrink-0">
                 <h3 class="text-2xl font-semibold text-gray-800" id="modal-add-edit-title">Tambah Aplikasi Baru</h3>
-                <button type="button" onclick="closeModal('modal-add-edit')" class="text-gray-400 hover:text-gray-700">
+                <button type="button" onclick="closeModal('modal-add-edit')" class="text-gray-400 hover:text-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-            <!-- Body Modal (Scrollable) -->
-            <div class="p-6 space-y-4 overflow-y-auto">
-                <!-- Input ID tersembunyi (untuk mode edit) -->
-                <input type="hidden" id="edit-app-id" name="id_add_app">
-                
+
+            <!-- BODY: Scrollable & Flex Grow -->
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="edit-nama" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
+                        <label class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
                         <input type="text" id="edit-nama" name="nama" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                     <div>
-                        <label for="edit-tahun" class="block text-sm font-medium text-gray-700">Tahun Buat</label>
-                        <input type="number" id="edit-tahun" name="tahun_buat" required placeholder="YYYY" min="1999" max="2999" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                        <label class="block text-sm font-medium text-gray-700">Tahun Buat</label>
+                        <input type="number" id="edit-tahun" name="tahun_buat" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
                 <div>
-                    <label for="edit-kategori" class="block text-sm font-medium text-gray-700">Kategori</Labe>
-                    <input type="text" id="edit-kategori" name="kategori" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Misal: Pengumpulan Data, Visualisasi, ...">
+                    <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                    <input type="text" id="edit-kategori" name="kategori" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Misal: Pengumpulan Data, Visualisasi...">
                 </div>
                 <div>
-                    <label for="edit-penjelasan" class="block text-sm font-medium text-gray-700">Penjelasan</label>
-                    <textarea id="edit-penjelasan" name="penjelasan" rows="3" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Jelaskan fungsi utama aplikasi..."></textarea>
+                    <label class="block text-sm font-medium text-gray-700">Penjelasan</label>
+                    <textarea id="edit-penjelasan" name="penjelasan" rows="3" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent"></textarea>
                 </div>
                 <div>
-                    <label for="edit-link" class="block text-sm font-medium text-gray-700">Link / Tautan Aplikasi</label>
-                    <input type="url" id="edit-link" name="link" required placeholder="https://" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    <label class="block text-sm font-medium text-gray-700">Link / Tautan Aplikasi</label>
+                    <input type="url" id="edit-link" name="link" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="https://...">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="edit-developer" class="block text-sm font-medium text-gray-700">Developer</label>
+                        <label class="block text-sm font-medium text-gray-700">Developer</label>
                         <input type="text" id="edit-developer" name="developer" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                     <div>
-                        <label for="edit-narahubung" class="block text-sm font-medium text-gray-700">Narahubung (Email/No. HP)</label>
+                        <label class="block text-sm font-medium text-gray-700">Narahubung (Email/No. HP)</label>
                         <input type="text" id="edit-narahubung" name="narahubung" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
                 <div>
-                    <label for="edit-logo" class="block text-sm font-medium text-gray-700">Link Logo (Opsional)</label>
-                    <input type="url" id="edit-logo" name="logo" placeholder="https://... (link ke .png atau .svg)" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+                    <label class="block text-sm font-medium text-gray-700">Link Logo (Opsional)</label>
+                    <input type="url" id="edit-logo" name="logo" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="https://... (.png/.svg)">
                 </div>
             </div>
-            <!-- Footer Modal -->
-            <div class="p-5 border-t bg-gray-50 sticky bottom-0">
+
+            <!-- FOOTER: Sticky Bottom -->
+            <div class="p-5 border-t bg-gray-50 rounded-b-lg flex-shrink-0">
                 <p id="modal-add-edit-error" class="hidden text-sm text-red-600 mb-4"></p>
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal('modal-add-edit')" class="w-full sm:w-auto py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">
+                    <button type="button" onclick="closeModal('modal-add-edit')" class="w-full sm:w-auto py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors">
                         Batal
                     </button>
-                    <button type="submit" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
+                    <button type="submit" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors">
                         Simpan Perubahan
                     </button>
                 </div>
@@ -154,43 +136,39 @@
 </div>
 
 <!-- 2. Modal Konfirmasi Delete -->
-<div id="modal-delete-confirm" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+<div id="modal-delete-confirm" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
         <form id="form-delete-confirm">
             <input type="hidden" id="delete-app-id">
-            <div class="p-6 text-center">
-                <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Hapus Aplikasi?</h3>
-                <p class="text-gray-600 mb-6">
-                    Anda yakin ingin menghapus aplikasi "<span id="delete-app-name" class="font-semibold"></span>"? Tindakan ini tidak dapat dibatalkan.
-                </p>
-                <p id="modal-delete-error" class="hidden text-sm text-red-600 mb-4"></p>
-                <div class="flex justify-center space-x-4">
-                    <button type="button" onclick="closeModal('modal-delete-confirm')" class="w-full py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">
-                        Batal
-                    </button>
-                    <button type="submit" class="w-full py-2 px-5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
-                        Ya, Hapus
-                    </button>
-                </div>
+            <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Hapus Aplikasi?</h3>
+            <p class="text-gray-600 mb-6">
+                Anda yakin ingin menghapus aplikasi "<span id="delete-app-name" class="font-semibold"></span>"? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <p id="modal-delete-error" class="hidden text-sm text-red-600 mb-4"></p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" onclick="closeModal('modal-delete-confirm')" class="w-full py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">
+                    Batal
+                </button>
+                <button type="submit" class="w-full py-2 px-5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
+                    Ya, Hapus
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <!-- 3. Modal Approval (Admin) -->
-<div id="modal-approve-admin" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4">
+<div id="modal-approve-admin" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
         <form id="form-approve-admin">
             <input type="hidden" id="approve-app-id">
-            <!-- Header Modal -->
             <div class="flex justify-between items-center p-5 border-b">
                 <h3 class="text-2xl font-semibold text-gray-800">Setujui Aplikasi</h3>
                 <button type="button" onclick="closeModal('modal-approve-admin')" class="text-gray-400 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-            <!-- Body Modal -->
             <div class="p-6 space-y-4">
                 <p class="text-gray-600">
                     Tinjau aplikasi "<span id="approve-app-name" class="font-semibold"></span>" dan ubah status pengajuannya.
@@ -204,32 +182,28 @@
                     </select>
                 </div>
             </div>
-            <!-- Footer Modal -->
-            <div class="p-5 border-t bg-gray-50">
+            <div class="p-5 border-t bg-gray-50 flex justify-end">
                 <p id="modal-approve-error" class="hidden text-sm text-red-600 mb-4"></p>
-                <div class="flex justify-end">
-                    <button type="submit" class="py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
-                        Simpan Status
-                    </button>
-                </div>
+                <button type="submit" class="py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
+                    Simpan Status
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <!-- 4. Modal View Details (Read-Only) -->
-<div id="modal-view-details" class="modal fixed inset-0 z-[60] overflow-y-auto bg-black bg-opacity-60 items-center justify-center p-4">
+<div id="modal-view-details" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         <!-- Header Modal -->
-        <div class="flex justify-between items-center p-5 border-b sticky top-0 bg-white">
+        <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg flex-shrink-0">
             <h3 class="text-2xl font-semibold text-gray-800">Detail Pengajuan Aplikasi</h3>
             <button type="button" onclick="closeModal('modal-view-details')" class="text-gray-400 hover:text-gray-700">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
         </div>
-        <!-- Body Modal (Scrollable) -->
-        <div class="p-6 space-y-4 overflow-y-auto">
-            
+        <!-- Body Modal -->
+        <div class="p-6 space-y-4 overflow-y-auto flex-1">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-500">Nama Aplikasi</label>
@@ -270,7 +244,7 @@
             </div>
         </div>
         <!-- Footer Modal -->
-        <div class="p-5 border-t bg-gray-50 sticky bottom-0">
+        <div class="p-5 border-t bg-gray-50 rounded-b-lg flex-shrink-0">
             <div class="flex justify-end">
                 <button type="button" onclick="closeModal('modal-view-details')" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
                     Tutup

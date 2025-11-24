@@ -32,6 +32,11 @@
     </script>
     
     <style>
+        /* Animasi smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* CSS untuk Modal (diperlukan untuk SEMUA modal) */
         .modal {
             display: none; /* Sembunyi secara default */
@@ -282,13 +287,12 @@
     </div>
     
     <!-- 4. MODALS (Placeholder) -->
-    <!-- Kode modal login & lupa password akan dimuat oleh js/main.js ke sini -->
     <div id="modals-placeholder"></div>
     
     <!-- 5. SCRIPT -->
-    <!-- Memuat Skrip Injeksi Komponen yang BARU -->
+    <!-- Memuat Skrip Injeksi Komponen -->
     <script src="js/main.js" defer></script>
-
+    
     <!-- Skrip Khusus Halaman Ini -->
     <script>
         /**
@@ -318,18 +322,30 @@
             const viewListBtn = document.getElementById('view-list');
             const loadingContainer = document.getElementById('loading-container');
             const errorContainer = document.getElementById('error-container');
-            const errorMessage = document.getElementById('error-message'); // Ditambahkan
+            const errorMessage = document.getElementById('error-message'); 
             
-            // Elemen Pagination
             const paginationContainer = document.getElementById('pagination-controls');
             const pageInfo = document.getElementById('page-info');
-
-            // --- Fungsi Render Tampilan (DIPERBARUI) ---
             
-            /**
-             * Fungsi Render Utama (Diperbarui untuk Pagination)
-             * @param {string} view - 'grid' atau 'list'
-             */
+            const token = localStorage.getItem('haloKakaToken');
+
+            // --- BARU: Fungsi Track Visit (Ditempatkan di sini dan di-attach ke window) ---
+            window.trackVisit = async function(id, event) {
+                // Mencegah klik tombol "Open" memicu onclick pada container (yang membuka modal)
+                if (event) event.stopPropagation();
+
+                try {
+                    // Panggil API secara asinkron (fire-and-forget)
+                    fetch(`http://localhost:5000/api/aplikasi/${id}/visit`, { method: 'POST' });
+                    console.log(`Mencatat kunjungan untuk App ID: ${id}`);
+                } catch (e) {
+                    console.error("Gagal mencatat kunjungan", e);
+                }
+                // Browser akan melanjutkan navigasi ke href secara otomatis
+            };
+
+            // --- Fungsi Render Tampilan ---
+            
             function renderAplikasi(view) {
                 if (!container) return; 
                 
@@ -341,7 +357,7 @@
                     noResults.style.display = 'block';
                     container.style.display = 'none';
                     pageInfo.innerText = "Menampilkan 0 dari 0 aplikasi";
-                    setupPagination(0); // Sembunyikan tombol pagination
+                    setupPagination(0); 
                     return;
                 }
                 
@@ -352,13 +368,12 @@
                 const startIndex = (currentPage - 1) * itemsPerPage;
                 const endIndex = startIndex + itemsPerPage;
                 const itemsToRender = filteredAplikasi.slice(startIndex, endIndex);
-                // --- AKHIR LOGIKA PAGINATION ---
 
                 // Update info halaman
                 const endInfo = Math.min(endIndex, totalFiltered);
                 pageInfo.innerText = `Menampilkan ${startIndex + 1}-${endInfo} dari ${totalFiltered} aplikasi`;
 
-                // Atur layout (grid/list)
+                // Atur layout
                 if (view === 'grid') {
                     container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
                     itemsToRender.forEach(app => { container.innerHTML += renderGrid(app); });
@@ -367,30 +382,32 @@
                     itemsToRender.forEach(app => { container.innerHTML += renderList(app); });
                 }
 
-                // Panggil fungsi untuk membuat tombol pagination
                 setupPagination(totalFiltered);
             }
 
-            /**
-             * PERBAIKAN: Mengembalikan fungsi renderGrid lengkap
-             */
+            // Template Tampilan Grid (dengan trackVisit)
             function renderGrid(app) {
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
                     ? app.logo 
                     : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
                     : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
                 
+                // Menentukan warna badge status
+                const statusClass = app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+
                 return `
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100" onclick="openDetailModal(${app.id_app})">
-                        <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100 flex flex-col h-full" onclick="openDetailModal('${app.id_app}')">
+                        <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden flex-shrink-0">
                             ${logoHtml}
                         </div>
-                        <div class="p-5">
+                        <div class="p-5 flex flex-col flex-grow">
                             <h3 class="text-xl font-semibold text-gray-800 mb-1 truncate" title="${app.nama}">${app.nama}</h3>
-                            <span class="text-sm text-accent mb-3 block">${app.kategori || ''}</span>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-medium text-gray-600 truncate" title="${app.developer}">${app.developer || ''}</span>
-                                <span class="text-xs px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            <span class="text-sm text-accent mb-4 block">${app.kategori || ''}</span>
+                            
+                            <!-- REPLACED: Status Badge menggantikan tombol Open -->
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="text-xs font-medium text-gray-600 truncate w-1/2" title="${app.developer}">${app.developer || ''}</span>
+                                <span class="text-xs px-2 py-1 rounded-full ${statusClass} whitespace-nowrap">
                                     ${app.status_aplikasi || 'N/A'}
                                 </span>
                             </div>
@@ -398,17 +415,18 @@
                     </div>`;
             }
 
-            /**
-             * PERBAIKAN: Mengembalikan fungsi renderList lengkap
-             */
+            // Template Tampilan List (dengan trackVisit)
             function renderList(app) {
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
                     ? app.logo 
                     : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
                     : `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
 
+                // Menentukan warna badge status
+                const statusClass = app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+
                 return `
-                    <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal(${app.id_app})">
+                    <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal('${app.id_app}')">
                         <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
                             ${logoHtml}
                         </div>
@@ -417,23 +435,19 @@
                             <p class="text-sm text-gray-500 truncate">${app.kategori || ''} | ${app.developer || ''}</p>
                         </div>
                         <div class="flex-shrink-0 flex items-center space-x-4 ml-auto">
-                            <span class="hidden sm:inline-block text-sm px-3 py-1 rounded-full ${app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            <!-- REPLACED: Status Badge menggantikan tombol Open -->
+                            <span class="text-sm px-3 py-1 rounded-full ${statusClass}">
                                 ${app.status_aplikasi || 'N/A'}
                             </span>
-                            <a href="${app.link || '#'}" target="_blank" onclick="(e) => e.stopPropagation()" class="hidden md:inline-block bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition duration-300">
-                                Open
-                            </a>
                             <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
                         </div>
                     </div>`;
             }
 
-
-            // --- Fungsi Filter dan Pencarian (Diperbarui) ---
             function applyFilters() {
-                currentPage = 1; // Reset ke halaman 1
-
+                currentPage = 1; 
                 const query = searchInput.value.toLowerCase();
+                // ... (Ambil filter values) ...
                 const kategoriFilter = filterKategori.value;
                 const developerFilter = filterDeveloper.value;
                 const tahunFilter = filterTahun.value;
@@ -455,14 +469,13 @@
                 renderAplikasi(currentView);
             }
 
-            // --- Fungsi Inisialisasi ---
             function populateFilters(aplikasiArray) {
+                // ... (Logika populate filters sama) ...
                 const kategoriSet = new Set(aplikasiArray.map(app => app.kategori).filter(Boolean));
                 const developerSet = new Set(aplikasiArray.map(app => app.developer).filter(Boolean));
                 const tahunSet = new Set(aplikasiArray.map(app => app.tahun_buat).filter(Boolean));
                 const statusSet = new Set(aplikasiArray.map(app => app.status_aplikasi).filter(Boolean));
 
-                // Kosongkan filter sebelum mengisi
                 filterKategori.innerHTML = '<option value="">Semua Kategori</option>';
                 filterDeveloper.innerHTML = '<option value="">Semua Developer</option>';
                 filterTahun.innerHTML = '<option value="">Semua Tahun</option>';
@@ -474,51 +487,27 @@
                 statusSet.forEach(item => { filterStatus.innerHTML += `<option value="${item}">${item}</option>`; });
             }
             
-            // --- Fungsi Setup Pagination ---
-            
             function setupPagination(totalItems) {
-                if (!paginationContainer) return;
-                paginationContainer.innerHTML = ''; 
+                 const paginationEl = document.getElementById('pagination-controls');
+                 if (!paginationEl) return;
+                 paginationEl.innerHTML = ''; 
 
-                const totalPages = Math.ceil(totalItems / itemsPerPage);
-                if (totalPages <= 1) return; // Sembunyikan jika hanya 1 halaman
+                 const totalPages = Math.ceil(totalItems / itemsPerPage);
+                 if (totalPages <= 1) return;
 
-                // Tombol "Previous"
-                paginationContainer.innerHTML += `
-                    <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                        &laquo; Prev
-                    </button>
-                `;
-
-                // Tombol Halaman (misal: 1, 2, 3...)
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationContainer.innerHTML += `
-                        <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                            ${i}
-                        </button>
-                    `;
-                }
-
-                // Tombol "Next"
-                paginationContainer.innerHTML += `
-                    <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                        Next &raquo;
-                    </button>
-                `;
+                 paginationEl.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Prev</button>`;
+                 for (let i = 1; i <= totalPages; i++) {
+                     paginationEl.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                 }
+                 paginationEl.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
             }
 
-            // Dibuat global agar bisa diakses onclick
             window.changePage = function(page) {
                 currentPage = page;
                 renderAplikasi(currentView);
-                // Scroll ke atas list
-                document.getElementById('aplikasi-container').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
+                document.getElementById('aplikasi-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
-            // Dibuat global agar bisa diakses onclick
             window.openDetailModal = function(id) {
                 const app = aplikasiDatabase.find(app => app.id_app == id);
                 if (!app) return;
@@ -537,22 +526,21 @@
                 document.getElementById('modal-narahubung').innerText = app.narahubung || '-';
                 document.getElementById('modal-pengunjung').innerText = app.jumlah_pengunjung || '0';
                 document.getElementById('modal-penjelasan').innerText = app.penjelasan || 'Tidak ada penjelasan.';
-                document.getElementById('modal-link').href = app.link || '#';
+                
+                // Update link dan pasang tracker
+                const modalLink = document.getElementById('modal-link');
+                modalLink.href = app.link || '#';
+                modalLink.onclick = () => trackVisit(app.id_app);
 
                 document.getElementById('report-id-app').value = app.id_app;
                 document.getElementById('report-nama-app').value = app.nama;
                 document.getElementById('report-nama-display').innerText = app.nama;
                 
-                // Gunakan fungsi modal global dari main.js
                 openModal('modal-detail');
             };
             
-            // PERBAIKAN: Tambahkan titik koma di sini untuk menghindari TypeError
-            ;
-
-            // --- Event Listener Utama (diekseskusi oleh main.js) ---
+            // ... (Load Data dan Event Listeners) ...
             
-            // 1. Ambil Data
             (async function loadAplikasi() {
                 try {
                     loadingContainer.style.display = 'flex';
@@ -560,17 +548,13 @@
                     container.style.display = 'none';
 
                     const response = await fetch('http://localhost:5000/api/aplikasi');
-                    if (!response.ok) {
-                        throw new Error(`Gagal mengambil data: ${response.statusText}`);
-                    }
+                    if (!response.ok) throw new Error(`Gagal mengambil data: ${response.statusText}`);
                     
                     const data = await response.json();
-                    
                     aplikasiDatabase = data;
                     filteredAplikasi = data;
                     
                     loadingContainer.style.display = 'none';
-
                     populateFilters(aplikasiDatabase);
 
                     const urlParams = new URLSearchParams(window.location.search);
@@ -578,98 +562,78 @@
                     
                     if (searchQuery) {
                         searchInput.value = searchQuery; 
-                        applyFilters(); // applyFilters akan memanggil renderAplikasi
+                        applyFilters();
                     } else {
-                        renderAplikasi(currentView); // Tampilkan halaman pertama
+                        renderAplikasi(currentView);
                     }
-
                 } catch (error) {
                     console.error('Gagal memuat aplikasi:', error);
                     loadingContainer.style.display = 'none';
                     errorContainer.style.display = 'block';
-                    // Tampilkan pesan error yang lebih jelas
                     document.getElementById('error-message').innerText = `Error: ${error.message}. Pastikan server backend Anda (npm run dev) sudah berjalan.`;
                 }
             })();
-
-
-            // 2. Pasang Listener Filter/Search
+            
             let searchTimeout;
             searchInput.addEventListener('input', () => {
                 clearTimeout(searchTimeout);
-                // Debounce: Tunda pencarian 300ms setelah user berhenti mengetik
                 searchTimeout = setTimeout(applyFilters, 300); 
             });
-
             filterKategori.addEventListener('change', applyFilters);
             filterDeveloper.addEventListener('change', applyFilters);
             filterTahun.addEventListener('change', applyFilters);
             filterStatus.addEventListener('change', applyFilters);
-
-            // 3. Pasang Listener Tombol View
             viewGridBtn.addEventListener('click', () => {
                 currentView = 'grid';
-                viewGridBtn.classList.add('bg-accent-light', 'text-accent');
-                viewGridBtn.classList.remove('bg-gray-200', 'text-gray-600');
-                viewListBtn.classList.add('bg-gray-200', 'text-gray-600');
-                viewListBtn.classList.remove('bg-accent-light', 'text-accent');
                 renderAplikasi(currentView);
             });
-
             viewListBtn.addEventListener('click', () => {
                 currentView = 'list';
-                viewListBtn.classList.add('bg-accent-light', 'text-accent');
-                viewListBtn.classList.remove('bg-gray-200', 'text-gray-600');
-                viewGridBtn.classList.add('bg-gray-200', 'text-gray-600');
-                viewGridBtn.classList.remove('bg-accent-light', 'text-accent');
                 renderAplikasi(currentView);
             });
 
-            // 4. Pasang Listener Form Laporan
             document.getElementById('form-laporan').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const checkedKategori = [];
-                document.querySelectorAll('input[name="kategori-laporan"]:checked').forEach(cb => {
-                    checkedKategori.push(cb.value);
-                });
-                
-                const data = {
+                 e.preventDefault();
+                 const checkedKategori = [];
+                 document.querySelectorAll('input[name="kategori-laporan"]:checked').forEach(cb => {
+                     checkedKategori.push(cb.value);
+                 });
+                 const data = {
                     id_app: document.getElementById('report-id-app').value,
                     nama_aplikasi: document.getElementById('report-nama-app').value,
                     jenis_laporan: checkedKategori.join(', '), 
                     keterangan: document.getElementById('report-keterangan').value,
                     nama_pelapor: document.getElementById('report-nama-pelapor').value,
-                };
+                 };
+                 const successMsg = document.getElementById('report-success');
+                 const errorMsg = document.getElementById('report-error');
+                 successMsg.style.display = 'none';
+                 errorMsg.style.display = 'none';
 
-                const successMsg = document.getElementById('report-success');
-                const errorMsg = document.getElementById('report-error');
-                successMsg.style.display = 'none';
-                errorMsg.style.display = 'none';
-
-                try {
-                    const response = await fetch('http://localhost:5000/api/laporan', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data),
-                    });
-
-                    if (response.ok) {
-                        successMsg.style.display = 'block';
-                        this.reset();
-                        setTimeout(() => closeModal('modal-lapor'), 2500);
-                    } else {
-                        errorMsg.innerText = 'Gagal mengirim laporan. Coba lagi nanti.';
-                        errorMsg.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('Error submitting report:', error);
-                    errorMsg.innerText = 'Tidak dapat terhubung ke server. Pastikan backend berjalan.';
-                    errorMsg.style.display = 'block';
-                }
+                 const headers = { 'Content-Type': 'application/json' };
+                 if (token) headers['Authorization'] = `Bearer ${token}`;
+                 
+                 try {
+                     const response = await fetch('http://localhost:5000/api/laporan', {
+                         method: 'POST', headers: headers, body: JSON.stringify(data)
+                     });
+                     const resData = await response.json();
+                     if(response.ok) {
+                         successMsg.style.display = 'block';
+                         this.reset();
+                         setTimeout(() => closeModal('modal-lapor'), 2500);
+                     } else {
+                         errorMsg.innerText = `Gagal: ${resData.message}`;
+                         errorMsg.style.display = 'block';
+                     }
+                 } catch(err) { 
+                     console.error(err);
+                     errorMsg.innerText = 'Koneksi error.';
+                     errorMsg.style.display = 'block';
+                 }
             });
-            
-        } // --- Akhir dari attachPageSpecificListeners ---
+
+        } // --- Akhir attachPageSpecificListeners ---
     </script>
 
 </body>

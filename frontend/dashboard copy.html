@@ -120,6 +120,24 @@
          */
         function attachPageSpecificListeners() {
             
+            // --- BARU: PENJAGA HALAMAN (Page Guard) ---
+            // Cek token SEBELUM melakukan hal lain
+            const token = localStorage.getItem('haloKakaToken');
+            if (!token) {
+                // Jika tidak ada token, jangan muat halaman ini.
+                // Tampilkan peringatan dan paksa kembali ke index.
+                // alert('Anda harus login untuk mengakses halaman dashboard.');
+                window.location.href = 'index.html';
+                
+                // Hentikan eksekusi sisa skrip di halaman ini
+                // Sembunyikan konten agar tidak "flash"
+                document.querySelector('main').style.display = 'none';
+                return; 
+            }
+            // --- AKHIR PENJAGA HALAMAN ---
+
+            
+            // --- Variabel Global Halaman ---
             const userRole = localStorage.getItem('haloKakaUserRole');
 
             // --- Helper function untuk memuat Skrip JS secara dinamis ---

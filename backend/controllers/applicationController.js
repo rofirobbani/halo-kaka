@@ -2,11 +2,51 @@
 
 import db from '../config/db.js';
 
+// --- CACHE MEMORY (Server-Side) ---
+let topAppsCache = null;
+let lastCacheTime = 0;
+const CACHE_DURATION = 1 * 60 * 1000; // 10 Menit dalam milidetik
+
+/**
+ * @route   GET /api/aplikasi/top
+ * @desc    Mengambil 5 Aplikasi Terpopuler (Cached)
+ */
+export const getTopApplications = async (req, res) => {
+    try {
+        const now = Date.now();
+
+        // 1. Cek apakah Cache masih valid (kurang dari 10 menit)
+        if (topAppsCache && (now - lastCacheTime < CACHE_DURATION)) {
+            console.log('Serving Top Apps from CACHE'); // Debugging
+            return res.status(200).json(topAppsCache);
+        }
+
+        // 2. Jika tidak ada cache atau kadaluarsa, ambil dari DB
+        console.log('Fetching Top Apps from DB...');
+        
+        // Mengambil 5 aplikasi aktif dengan pengunjung terbanyak
+        const [rows] = await db.query(
+            "SELECT * FROM applications WHERE status_aplikasi = 'Aktif' AND flag_view = TRUE ORDER BY jumlah_pengunjung DESC LIMIT 5"
+        );
+
+        // 3. Simpan ke Cache
+        topAppsCache = rows;
+        lastCacheTime = now;
+
+        res.json(rows);
+
+    } catch (error) {
+        console.error('Error getting top apps:', error);
+        res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+    }
+};
+
 /**
  * @route   GET /api/aplikasi
  * @desc    Mengambil semua aplikasi yang AKTIF
  */
 export const getAllAplikasi = async (req, res) => {
+// ... (kode getAllAplikasi yang sudah ada tidak berubah) ...
   try {
     const [rows] = await db.query(
       "SELECT * FROM applications WHERE status_aplikasi = 'Aktif' AND flag_view = TRUE ORDER BY nama ASC"
@@ -20,29 +60,23 @@ export const getAllAplikasi = async (req, res) => {
 
 /**
  * @route   POST /api/aplikasi/submit
- * @desc    Menerima pengajuan aplikasi baru (dari index.html)
+ * @desc    Menerima pengajuan aplikasi baru
  */
 export const submitAplikasi = async (req, res) => {
+// ... (kode submitAplikasi yang sudah ada tidak berubah) ...
   try {
-    // Ambil data dari body request (dari form di index.html)
     const { nama, kategori, penjelasan, link, narahubung, developer, tahun_buat } = req.body;
 
-    // Validasi sederhana
     if (!nama || !link || !developer || !tahun_buat) {
       return res.status(400).json({ message: 'Data yang diperlukan kurang lengkap (Nama, Link, Developer, Tahun)' });
     }
 
-    // --- PERBAIKAN ---
-    // Menyesuaikan kueri INSERT dengan skema DB terbaru di 'fase1_setup.md'
-    // 'id_app' dan 'logo' akan NULL by default.
-    // 'id_user_pengaju' adalah NULL karena ini adalah form publik (tidak login).
     const [result] = await db.query(
       `INSERT INTO add_apps 
          (nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, status_aplikasi, id_user_pengaju) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [nama, kategori, penjelasan, link, narahubung, developer, tahun_buat, 'Menunggu Persetujuan', null]
     );
-    // --- AKHIR PERBAIKAN ---
 
     res.status(201).json({ message: 'Aplikasi berhasil diajukan!', id: result.insertId });
 
@@ -50,4 +84,20 @@ export const submitAplikasi = async (req, res) => {
     console.error('Error saat submit aplikasi:', error);
     res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
   }
+};
+
+/**
+ * @route   POST /api/aplikasi/:id/visit
+ * @desc    Menambah jumlah pengunjung (+1) saat aplikasi dibuka
+ */
+export const incrementVisitor = async (req, res) => {
+// ... (kode incrementVisitor yang sudah ada tidak berubah) ...
+    try {
+        const { id } = req.params;
+        await db.query('UPDATE applications SET jumlah_pengunjung = jumlah_pengunjung + 1 WHERE id_app = ?', [id]);
+        res.status(200).json({ message: 'Visitor count updated' });
+    } catch (error) {
+        console.error('Error incrementing visitor:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 };
