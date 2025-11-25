@@ -113,23 +113,25 @@
             <aside class="w-full md:w-1/4 lg:w-1/5">
                 <div class="sticky top-28">
                     <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wider mb-4 hidden md:block">Menu</h2>
+                    <!-- PERBAIKAN RESPONSIVE: Menambahkan 'flex-wrap' -->
                     <div class="flex flex-row flex-wrap md:flex-col pb-4 md:pb-0">
-                        <!-- Tab Penambahan -->
+                        <!-- 
+                            Button Tab: 
+                            - 'data-tab' me-link ke ID 'tab-content'
+                            - 'id' digunakan untuk menyembunyikan (role-based)
+                        -->
                         <button data-tab="tab-penambahan" class="tab-button active flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Penambahan
                         </button>
-                        <!-- Tab Laporan -->
                         <button data-tab="tab-laporan" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H5a2 2 0 00-2 2zm0 0h18"></path></svg>
                             Laporan
                         </button>
-                        <!-- Tab Favourite -->
                         <button data-tab="tab-favourite" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             Favourite
                         </button>
-                        
                         <!-- Tab Khusus Admin -->
                         <button id="tab-btn-pengguna" data-tab="tab-pengguna" class="tab-button hidden flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -199,6 +201,7 @@
         function attachPageSpecificListeners() {
             
             // --- BARU: PENJAGA HALAMAN (Page Guard) ---
+            // Cek token SEBELUM melakukan hal lain
             const token = localStorage.getItem('haloKakaToken');
             if (!token) {
                 alert('Anda harus login untuk mengakses halaman dashboard.');
@@ -208,35 +211,21 @@
             }
             
             const userRole = localStorage.getItem('haloKakaUserRole');
-            
-            // --- VARIABLE UNTUK MELACAK SKRIP YANG SUDAH DIMUAT ---
-            const loadedScripts = new Set();
+            console.log("DEBUG: User Role:", userRole);
 
-            // --- Helper function: Muat Script hanya jika belum ada ---
+            // --- Helper untuk memuat Skrip JS secara dinamis ---
             function loadScript(filePath) {
                 return new Promise((resolve, reject) => {
-                    // 1. Cek apakah skrip sudah pernah dimuat
-                    if (loadedScripts.has(filePath)) {
-                        //console.log(`Skrip ${filePath} sudah ada, melewati muat ulang.`);
-                        resolve(); // Langsung resolve tanpa error
-                        return;
-                    }
-                    
-                    // 2. Cek juga di DOM (jaga-jaga)
+                    // Cek apakah script sudah ada di head
                     if (document.querySelector(`script[src="${filePath}"]`)) {
-                        loadedScripts.add(filePath);
-                        resolve();
-                        return;
+                         resolve(); // Sudah dimuat, langsung resolve
+                         return;
                     }
 
                     const script = document.createElement('script');
                     script.src = filePath;
                     script.defer = true;
-                    script.onload = () => {
-                        console.log(`Skrip ${filePath} berhasil dimuat.`);
-                        loadedScripts.add(filePath); // Tandai sudah dimuat
-                        resolve();
-                    };
+                    script.onload = () => resolve();
                     script.onerror = () => reject(new Error(`Gagal memuat skrip: ${filePath}`));
                     document.head.appendChild(script);
                 });
@@ -249,17 +238,14 @@
                 } 
                 
                 try {
-                    // 1. Muat HTML (Selalu replace konten HTML untuk reset tampilan)
                     const response = await fetch(htmlPath);
                     if (!response.ok) throw new Error(`File not found: ${htmlPath}`);
                     const html = await response.text();
                     placeholder.innerHTML = html;
                     
-                    // 2. Muat JS (Hanya jika belum dimuat)
                     if (jsPath) await loadScript(jsPath);
                     
-                    // 3. Panggil fungsi init dari file JS
-                    // Fungsi init harus dirancang agar aman dipanggil berkali-kali
+                    // --- PEMANGGILAN FUNGSI INIT SETIAP TAB ---
                     if (tabId === 'tab-penambahan' && typeof initTabPenambahan === 'function') {
                         initTabPenambahan();
                     }
@@ -270,21 +256,46 @@
                         initTabFavourite();
                     }
                     // Tab Admin
-                    if (tabId === 'tab-pengguna') {
-                        if (typeof window.initTabPengguna === 'function') {
-                            window.initTabPengguna();
-                        } else {
-                            console.error("Fungsi 'initTabPengguna' tidak ditemukan. Pastikan tab_pengguna.js termuat.");
-                        }
+                    if (tabId === 'tab-pengguna' && typeof window.initTabPengguna === 'function') {
+                         window.initTabPengguna();
                     }
                     if (tabId === 'tab-kompilasi' && typeof initTabKompilasi === 'function') {
                         initTabKompilasi();
                     }
                     
                 } catch (error) {
-                    console.error(`Gagal memuat tab ${tabId}:`, error);
+                    console.error(`Gagal memuat ${htmlPath}:`, error);
                     placeholder.innerHTML = `<p class="text-red-500">Gagal memuat konten tab.</p>`;
                 }
+            }
+
+            // --- FUNGSI UNTUK MENGAKTIFKAN TAB (BESERTA HASH URL) ---
+            function activateTab(targetTabId) {
+                // 1. Update Tampilan Tombol
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(btn => {
+                    if (btn.getAttribute('data-tab') === targetTabId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                // 2. Update Tampilan Konten
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => {
+                    if (content.id === targetTabId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+                
+                // 3. Update URL Hash (misal: #penambahan)
+                // Hilangkan prefix 'tab-' untuk URL yang lebih bersih
+                const hashName = targetTabId.replace('tab-', '');
+                // Menggunakan replaceState agar history browser tidak penuh
+                history.replaceState(null, null, `#${hashName}`);
             }
 
             async function initializeDashboard() {
@@ -309,7 +320,7 @@
                     if(tabKompilasi) tabKompilasi.classList.add('hidden');
                 }
 
-                // 2. Daftar Tab yang akan dimuat
+                // 2. Muat Konten Tab
                 const tabPromises = [
                     loadTabContent('tab-penambahan', 'components/dashboard/tab_penambahan.html', 'js/tabs/tab_penambahan.js'),
                     loadTabContent('tab-laporan', 'components/dashboard/tab_laporan.html', 'js/tabs/tab_laporan.js'),
@@ -325,21 +336,30 @@
 
                 // 3. Pasang listener Pindah Tab
                 const tabButtons = document.querySelectorAll('.tab-button');
-                const tabContents = document.querySelectorAll('.tab-content');
-
                 tabButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         const targetTab = button.getAttribute('data-tab'); 
-
-                        tabButtons.forEach(btn => btn.classList.remove('active'));
-                        button.classList.add('active');
-
-                        tabContents.forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        document.getElementById(targetTab).classList.add('active');
+                        activateTab(targetTab); // Panggil fungsi aktivasi yang baru
+                        
+                        // Panggil fungsi init lagi jika perlu refresh data saat klik tab
+                        if (targetTab === 'tab-penambahan' && typeof initTabPenambahan === 'function') initTabPenambahan();
+                        if (targetTab === 'tab-laporan' && typeof initTabLaporan === 'function') initTabLaporan();
+                        if (targetTab === 'tab-pengguna' && typeof window.initTabPengguna === 'function') window.initTabPengguna();
+                        if (targetTab === 'tab-kompilasi' && typeof initTabKompilasi === 'function') initTabKompilasi();
                     });
                 });
+
+                // 4. Cek Hash URL saat pertama kali load
+                const currentHash = window.location.hash.replace('#', '');
+                if (currentHash) {
+                    const targetTabId = `tab-${currentHash}`;
+                    // Pastikan tab yang diminta ada dan boleh diakses
+                    const targetBtn = document.querySelector(`button[data-tab="${targetTabId}"]`);
+                    
+                    if (targetBtn && !targetBtn.classList.contains('hidden')) {
+                         activateTab(targetTabId);
+                    }
+                }
             }
 
             initializeDashboard();

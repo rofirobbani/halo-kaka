@@ -46,7 +46,7 @@
             display: flex; /* Ditampilkan oleh JS */
         }
         
-        /* CSS untuk Hamburger (dipindahkan dari header.html agar tetap berfungsi) */
+        /* CSS untuk Hamburger */
         #menu-toggle {
             display: none;
         }
@@ -58,9 +58,7 @@
 <body class="font-sans text-gray-800">
 
     <!-- 1. HEADER (Placeholder) -->
-    <!-- Kode header akan dimuat oleh js/main.js ke sini -->
     <div id="header-placeholder">
-        <!-- Opsional: Tampilkan "Loading..." sederhana -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
                 <div class="text-3xl font-bold text-accent">Halo KAKA</div>
@@ -72,7 +70,6 @@
     <main>
         <!-- 2. SECTION 1: BERANDA (HERO) -->
         <section id="beranda" class="pt-24 pb-32 bg-gradient-to-b from-white to-accent-light">
-             <!-- ... (Konten Hero Tetap Sama) ... -->
             <div class="container mx-auto px-6 text-center">
                 <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
                     Mau Cari Aplikasi Apa Hari Ini?
@@ -105,24 +102,17 @@
                     </p>
                 </div>
                 
-                <!-- Placeholder Loading -->
                 <div id="top-app-loading" class="flex justify-center py-10">
                     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
                 </div>
 
-                <!-- Grid Kartu Aplikasi (Akan diisi JS) -->
-                <div id="top-app-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 hidden">
-                    <!-- Kartu akan di-render di sini -->
-                </div>
-                
-                <!-- Pesan Error -->
+                <div id="top-app-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 hidden"></div>
                 <p id="top-app-error" class="hidden text-center text-gray-500 italic py-8">Belum ada data aplikasi populer.</p>
             </div>
         </section>
         
         <!-- 4. SECTION 3: DAFTAR (FORMULIR TERHUBUNG API) -->
         <section id="daftar" class="py-24 bg-gradient-to-b from-accent-light to-white">
-             <!-- ... (Konten Form Daftar Tetap Sama) ... -->
              <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                     <div class="mb-10 md:mb-0">
@@ -132,7 +122,6 @@
                     <div class="bg-white p-8 md:p-10 rounded-xl shadow-2xl">
                         <h3 class="text-2xl font-bold text-center mb-8">Formulir Pendaftaran Aplikasi</h3>
                         <form id="form-pendaftaran" class="space-y-6">
-                            <!-- ... form fields ... -->
                             <div>
                                 <label for="nama-aplikasi" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
                                 <input type="text" name="nama" id="nama-aplikasi" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
@@ -166,6 +155,38 @@
                                 <label for="narahubung-pengaju" class="block text-sm font-medium text-gray-700">Narahubung (Email/No. HP)</label>
                                 <input type="text" name="narahubung" id="narahubung-pengaju" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                             </div>
+                            
+                            <!-- UPDATE: Input Logo dengan Pilihan -->
+                            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Logo Aplikasi</label>
+                                
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="logo_option" value="default" checked class="text-accent focus:ring-accent border-gray-300" onchange="toggleLogoInput(this.value)">
+                                        <span class="ml-2 text-gray-700 text-sm">Tidak Ada Logo (Default)</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="logo_option" value="upload" class="text-accent focus:ring-accent border-gray-300" onchange="toggleLogoInput(this.value)">
+                                        <span class="ml-2 text-gray-700 text-sm">Upload Gambar</span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Container Upload (Hidden by default) -->
+                                <div id="logo-upload-container" class="hidden">
+                                    <input type="file" id="logo-file" accept="image/png, image/jpeg, image/webp" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent-light file:text-accent hover:file:bg-blue-100">
+                                    <p class="mt-1 text-xs text-gray-500">Format: PNG, JPG, WEBP. Maksimal 2 MB.</p>
+                                </div>
+                                
+                                <!-- Preview Default
+                                <div id="logo-preview-default" class="mt-2 flex items-center">
+                                    <span class="text-xs text-gray-500 mr-2">Preview:</span>
+                                    <div class="w-10 h-10 bg-white border border-gray-200 rounded flex items-center justify-center text-accent"> -->
+                                        <!-- SVG BPS Sederhana -->
+                                        <!-- <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    </div>
+                                </div> -->
+                            </div>
+
                             <div>
                                 <label for="tahun-buat" class="block text-sm font-medium text-gray-700">Tahun Buat</label>
                                 <input type="number" name="tahun_buat" id="tahun-buat" required placeholder="YYYY" min="2010" max="2099" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
@@ -191,17 +212,45 @@
     <div id="modals-placeholder"></div>
     
     <!-- 7. SCRIPT -->
-    <!-- Memuat Skrip Injeksi Komponen yang BARU -->
     <script src="js/main.js" defer></script>
     
-    <!-- Skrip Khusus Halaman Ini -->
     <script>
+        // --- SVG Logo BPS (Default) ---
+        // Kita simpan sebagai string untuk dikirim ke DB jika user memilih default
+        const DEFAULT_BPS_LOGO = `<svg class="w-full h-full text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>`;
+
+        // --- Fungsi Toggle Input Logo ---
+        function toggleLogoInput(value) {
+            const uploadContainer = document.getElementById('logo-upload-container');
+            const defaultPreview = document.getElementById('logo-preview-default');
+            
+            if (value === 'upload') {
+                uploadContainer.classList.remove('hidden');
+                defaultPreview.classList.add('hidden');
+            } else {
+                uploadContainer.classList.add('hidden');
+                defaultPreview.classList.remove('hidden');
+                // Reset input file jika kembali ke default
+                document.getElementById('logo-file').value = ''; 
+            }
+        }
+
+        // --- Helper: Convert File to Base64 ---
+        const convertToBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (error) => reject(error);
+            });
+        };
+
         // Fungsi ini dipanggil oleh main.js setelah semua komponen dimuat
         function attachPageSpecificListeners() {
             // 1. Muat Top Apps
             loadTopApps();
 
-            // 2. Listener Form Pendaftaran Aplikasi (Sama seperti sebelumnya)
+            // 2. Listener Form Pendaftaran Aplikasi
             const formPendaftaran = document.getElementById('form-pendaftaran');
             if (formPendaftaran) {
                 formPendaftaran.addEventListener('submit', async function(e) {
@@ -216,6 +265,43 @@
                     successMsg.style.display = 'none';
                     errorMsg.style.display = 'none';
                     
+                    // --- LOGIKA LOGO ---
+                    const logoOption = document.querySelector('input[name="logo_option"]:checked').value;
+                    let logoData = DEFAULT_BPS_LOGO; // Default
+
+                    if (logoOption === 'upload') {
+                        const fileInput = document.getElementById('logo-file');
+                        if (fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            
+                            // Validasi Ukuran (2MB)
+                            if (file.size > 2 * 1024 * 1024) {
+                                errorMsg.innerText = "Ukuran file logo terlalu besar (Maks 2MB).";
+                                errorMsg.style.display = 'block';
+                                return;
+                            }
+
+                            // Konversi ke Base64
+                            try {
+                                logoData = await convertToBase64(file);
+                            } catch (err) {
+                                console.error("Gagal memproses gambar", err);
+                                errorMsg.innerText = "Gagal memproses gambar logo.";
+                                errorMsg.style.display = 'block';
+                                return;
+                            }
+                        } else {
+                            // User pilih upload tapi tidak pilih file -> Pakai default atau kirim kosong?
+                            // Kita pakai default saja agar tidak error
+                            logoData = DEFAULT_BPS_LOGO;
+                        }
+                    }
+
+                    // Masukkan data logo ke object data yang akan dikirim
+                    data.logo = logoData;
+                    // Hapus field radio button dari data json agar bersih
+                    delete data.logo_option; 
+
                     try {
                         const response = await fetch('http://localhost:5000/api/aplikasi/submit', {
                             method: 'POST',
@@ -226,6 +312,9 @@
                         if (response.ok) {
                             successMsg.style.display = 'block';
                             form.reset();
+                            // Kembalikan tampilan logo ke default setelah reset
+                            toggleLogoInput('default');
+                            document.querySelector('input[name="logo_option"][value="default"]').checked = true;
                         } else {
                             const errorData = await response.json();
                             errorMsg.innerText = `Gagal mengirim: ${errorData.message || 'Coba lagi nanti.'}`;
@@ -246,11 +335,9 @@
             const container = document.getElementById('top-app-container');
             const errorEl = document.getElementById('top-app-error');
             
-            // Coba ambil dari LocalStorage (Fallback Cache)
             const cachedData = localStorage.getItem('haloKakaTopApps');
             
             try {
-                // Panggil API
                 const response = await fetch('http://localhost:5000/api/aplikasi/top');
                 
                 if (!response.ok) {
@@ -259,20 +346,17 @@
 
                 const data = await response.json();
                 
-                // Jika sukses, simpan ke cache dan render
                 localStorage.setItem('haloKakaTopApps', JSON.stringify(data));
                 renderTopApps(data, container, loadingEl, errorEl);
 
             } catch (error) {
                 console.warn("Gagal mengambil Top Apps dari server, mencoba cache...", error);
                 
-                // Jika gagal (server mati), cek cache
                 if (cachedData) {
                     const data = JSON.parse(cachedData);
                     console.log("Menggunakan data cache Top Apps.");
                     renderTopApps(data, container, loadingEl, errorEl);
                 } else {
-                    // Jika cache juga kosong, tampilkan error
                     loadingEl.style.display = 'none';
                     errorEl.style.display = 'block';
                     errorEl.innerText = "Tidak dapat memuat data (Server offline & Cache kosong).";
@@ -280,10 +364,6 @@
             }
         }
 
-        /**
-         * Helper untuk memformat angka pengunjung
-         * Contoh: 1200 -> 1,2 rb | 1500000 -> 1,5 jt
-         */
         function formatVisitorCount(num) {
             if (num >= 1000000) {
                 return (num / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + ' jt';
@@ -307,23 +387,19 @@
             error.style.display = 'none';
 
             data.forEach((app, index) => {
-                // Logo Placeholder
+                // Logic Render Logo: Cek apakah SVG atau Base64 Image
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
-                    ? app.logo.replace('w-10 h-10', 'w-16 h-16') 
-                    : (app.logo ? `<img src="${app.logo}" class="w-full h-full object-cover">` 
+                    ? app.logo.replace('w-10 h-10', 'w-16 h-16').replace('w-full h-full', 'w-16 h-16') // Resize SVG jika perlu
+                    : (app.logo ? `<img src="${app.logo}" class="w-full h-full object-contain">` 
                     : `<span class="text-3xl font-bold text-accent">${app.nama.substring(0,2).toUpperCase()}</span>`);
                 
-                // Warna bg icon berbeda tiap urutan (opsional)
                 const bgColors = ['bg-blue-100', 'bg-green-100', 'bg-indigo-100', 'bg-yellow-100', 'bg-red-100'];
                 const textColor = ['text-blue-600', 'text-green-600', 'text-indigo-600', 'text-yellow-600', 'text-red-600'];
                 const bgClass = bgColors[index % bgColors.length];
                 const textClass = textColor[index % textColor.length];
                 
-                // Format angka pengunjung
                 const visitorDisplay = formatVisitorCount(app.jumlah_pengunjung);
 
-                // Gunakan fungsi trackVisit dari main.js (jika sudah dipindahkan) atau definisi manual jika perlu
-                // Kita asumsikan trackVisit ada di main.js atau kita definisikan inline
                 const cardHtml = `
                     <div class="bg-white border border-gray-100 rounded-lg shadow-lg p-6 flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                         <div class="w-20 h-20 ${bgClass} rounded-full flex items-center justify-center mx-auto mb-4 ${textClass} overflow-hidden">

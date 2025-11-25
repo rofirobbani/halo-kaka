@@ -17,7 +17,9 @@
         <label for="penambahan-search" class="block text-sm font-medium text-gray-700">Cari di Semua Kolom</label>
         <div class="relative mt-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
             </div>
             <input type="text" id="penambahan-search" class="block w-full p-2 pl-10 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Ketik nama, kategori, developer, dll...">
         </div>
@@ -66,20 +68,19 @@
 
 <!-- 1. Modal Tambah / Edit Aplikasi -->
 <div id="modal-add-edit" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
-    <!-- Container Modal: Flex Col + Max Height -->
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-y-auto">
         <form id="form-add-edit" class="flex flex-col h-full">
             <input type="hidden" id="edit-app-id" name="id_add_app">
             
-            <!-- HEADER: Sticky Top -->
-            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg flex-shrink-0">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg flex-shrink-0 sticky top-0">
                 <h3 class="text-2xl font-semibold text-gray-800" id="modal-add-edit-title">Tambah Aplikasi Baru</h3>
                 <button type="button" onclick="closeModal('modal-add-edit')" class="text-gray-400 hover:text-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
 
-            <!-- BODY: Scrollable & Flex Grow -->
+            <!-- BODY -->
             <div class="p-6 space-y-4 overflow-y-auto flex-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -113,58 +114,82 @@
                         <input type="text" id="edit-narahubung" name="narahubung" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Link Logo (Opsional)</label>
-                    <input type="url" id="edit-logo" name="logo" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="https://... (.png/.svg)">
+                
+                <!-- UPDATE: Input Logo (Radio + File) -->
+                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Logo Aplikasi</label>
+                    <!-- Input tersembunyi untuk menyimpan logo lama saat edit -->
+                    <input type="hidden" id="edit-existing-logo">
+
+                    <div class="flex items-center space-x-4 mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="edit_logo_option" value="default" class="text-accent focus:ring-accent border-gray-300" onchange="toggleEditLogoInput(this.value)">
+                            <span class="ml-2 text-gray-700 text-sm">Default (Logo BPS)</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="edit_logo_option" value="upload" class="text-accent focus:ring-accent border-gray-300" onchange="toggleEditLogoInput(this.value)">
+                            <span class="ml-2 text-gray-700 text-sm">Upload / Custom</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Container Upload -->
+                    <div id="edit-logo-upload-container" class="hidden">
+                        <!-- Preview -->
+                        <div class="mb-3 flex flex-col items-center sm:items-start">
+                            <span class="text-xs text-gray-500 mb-1">Preview saat ini:</span>
+                            <div id="edit-logo-preview" class="w-24 h-24 bg-white border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden p-2">
+                                <!-- Logo akan di-render di sini -->
+                            </div>
+                        </div>
+
+                        <input type="file" id="edit-logo-file" accept="image/png, image/jpeg, image/webp" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent-light file:text-accent hover:file:bg-blue-100">
+                        <p class="mt-1 text-xs text-gray-500">Format: PNG, JPG, WEBP. Maksimal 2 MB. <br>(Biarkan kosong jika tidak ingin mengubah gambar saat mode Edit)</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- FOOTER: Sticky Bottom -->
-            <div class="p-5 border-t bg-gray-50 rounded-b-lg flex-shrink-0">
-                <p id="modal-add-edit-error" class="hidden text-sm text-red-600 mb-4"></p>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal('modal-add-edit')" class="w-full sm:w-auto py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors">
-                        Batal
-                    </button>
-                    <button type="submit" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors">
-                        Simpan Perubahan
-                    </button>
-                </div>
+            <!-- FOOTER -->
+            <div class="p-5 border-t bg-gray-50 rounded-b-lg flex-shrink-0 flex justify-end space-x-3 sticky bottom-0 z-10">
+                <p id="modal-add-edit-error" class="hidden text-sm text-red-600 mb-4 self-center mr-auto"></p>
+                <button type="button" onclick="closeModal('modal-add-edit')" class="w-full sm:w-auto py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors">
+                    Simpan Perubahan
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 2. Modal Konfirmasi Delete -->
+<!-- 2. Modal Konfirmasi Delete (Sama seperti sebelumnya) -->
 <div id="modal-delete-confirm" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+    <!-- ... (Isi tetap sama) ... -->
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
         <form id="form-delete-confirm">
             <input type="hidden" id="delete-app-id">
             <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Hapus Aplikasi?</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Aplikasi?</h3>
             <p class="text-gray-600 mb-6">
                 Anda yakin ingin menghapus aplikasi "<span id="delete-app-name" class="font-semibold"></span>"? Tindakan ini tidak dapat dibatalkan.
             </p>
             <p id="modal-delete-error" class="hidden text-sm text-red-600 mb-4"></p>
             <div class="flex justify-center space-x-4">
-                <button type="button" onclick="closeModal('modal-delete-confirm')" class="w-full py-2 px-5 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">
-                    Batal
-                </button>
-                <button type="submit" class="w-full py-2 px-5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
-                    Ya, Hapus
-                </button>
+                <button type="button" onclick="closeModal('modal-delete-confirm')" class="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Ya, Hapus</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 3. Modal Approval (Admin) -->
+<!-- 3. Modal Approval (Admin) (Sama seperti sebelumnya) -->
 <div id="modal-approve-admin" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+    <!-- ... (Isi tetap sama) ... -->
+     <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
         <form id="form-approve-admin">
             <input type="hidden" id="approve-app-id">
             <div class="flex justify-between items-center p-5 border-b">
-                <h3 class="text-2xl font-semibold text-gray-800">Setujui Aplikasi</h3>
+                <h3 class="text-xl font-semibold text-gray-800">Setujui Aplikasi</h3>
                 <button type="button" onclick="closeModal('modal-approve-admin')" class="text-gray-400 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
@@ -184,7 +209,7 @@
             </div>
             <div class="p-5 border-t bg-gray-50 flex justify-end">
                 <p id="modal-approve-error" class="hidden text-sm text-red-600 mb-4"></p>
-                <button type="submit" class="py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
+                <button type="submit" class="px-4 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">
                     Simpan Status
                 </button>
             </div>
@@ -192,17 +217,16 @@
     </div>
 </div>
 
-<!-- 4. Modal View Details (Read-Only) -->
+<!-- 4. Modal View Details (Read-Only) (Sama seperti sebelumnya) -->
 <div id="modal-view-details" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+    <!-- ... (Isi tetap sama) ... -->
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <!-- Header Modal -->
         <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg flex-shrink-0">
-            <h3 class="text-2xl font-semibold text-gray-800">Detail Pengajuan Aplikasi</h3>
+            <h3 class="text-xl font-semibold text-gray-800">Detail Pengajuan Aplikasi</h3>
             <button type="button" onclick="closeModal('modal-view-details')" class="text-gray-400 hover:text-gray-700">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
         </div>
-        <!-- Body Modal -->
         <div class="p-6 space-y-4 overflow-y-auto flex-1">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -243,7 +267,6 @@
                 </div>
             </div>
         </div>
-        <!-- Footer Modal -->
         <div class="p-5 border-t bg-gray-50 rounded-b-lg flex-shrink-0">
             <div class="flex justify-end">
                 <button type="button" onclick="closeModal('modal-view-details')" class="w-full sm:w-auto py-2 px-5 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark">

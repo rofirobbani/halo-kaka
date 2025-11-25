@@ -206,7 +206,7 @@
             <!-- Modal Body -->
             <div class="p-6 md:p-8 overflow-y-auto">
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8">
-                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0" id="modal-logo"></div>
+                    <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0 p-4" id="modal-logo"></div>
                     <div class="flex-grow">
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div><span class="block text-gray-500 font-medium">Kategori</span><span class="block text-gray-800 font-semibold" id="modal-kategori">-</span></div>
@@ -514,7 +514,7 @@
 
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
                     ? app.logo.replace('w-10 h-10', 'w-24 h-24').replace('w-16 h-16', 'w-24 h-24') 
-                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-contain">` 
                     : `<svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
                 
                 document.getElementById('modal-logo').innerHTML = logoHtml;

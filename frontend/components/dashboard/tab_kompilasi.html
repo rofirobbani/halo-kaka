@@ -1,7 +1,7 @@
 <!-- Konten untuk Tab Kompilasi Aplikasi (Khusus Admin) -->
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold text-gray-800">Kompilasi Seluruh Aplikasi</h2>
-    <!-- Admin juga bisa tambah aplikasi via Tab Penambahan, jadi tombol di sini opsional/redirect -->
+    <!-- Admin juga bisa tambah aplikasi via Tab Penambahan -->
     <button onclick="document.querySelector('[data-tab=\'tab-penambahan\']').click()" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-300 flex items-center">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
         Tambah Baru via Penambahan
@@ -71,64 +71,94 @@
 <!-- 1. Modal Edit Aplikasi Terdaftar -->
 <div id="modal-kompilasi-edit" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
     <!-- Container Modal dengan Flexbox -->
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         
-        <form id="form-kompilasi-edit" class="flex flex-col h-full">
+        <!-- Form mengisi tinggi penuh -->
+        <form id="form-kompilasi-edit" class="flex flex-col h-full overflow-y-auto">
             <input type="hidden" id="edit-kompilasi-id">
-            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg sticky top-0">
+            
+            <!-- Header (Sticky Top) -->
+            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg sticky top-0 z-10">
                 <h3 class="text-xl font-semibold text-gray-800">Edit Aplikasi Terdaftar</h3>
-                <button type="button" onclick="closeModal('modal-kompilasi-edit')" class="text-gray-400 hover:text-gray-700">
+                <button type="button" onclick="closeModal('modal-kompilasi-edit')" class="text-gray-400 hover:text-gray-700 transition-colors">
                      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
 
-            <!-- Body (Bisa di-scroll / flex-1) -->
+            <!-- Body (Normal Flow) -->
             <div class="p-6 space-y-4 overflow-y-auto flex-1">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
-                        <input type="text" id="edit-kompilasi-nama" required class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                        <input type="text" id="edit-kompilasi-nama" required class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Tahun Buat</label>
-                        <input type="number" id="edit-kompilasi-tahun" required class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                        <input type="number" id="edit-kompilasi-tahun" required class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                    <input type="text" id="edit-kompilasi-kategori" required class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" id="edit-kompilasi-kategori" required class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Penjelasan</label>
-                    <textarea id="edit-kompilasi-penjelasan" rows="3" class="mt-1 w-full p-3 border border-gray-300 rounded-md"></textarea>
+                    <textarea id="edit-kompilasi-penjelasan" rows="3" class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent"></textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Link Aplikasi</label>
-                    <input type="url" id="edit-kompilasi-link" required class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                    <input type="url" id="edit-kompilasi-link" required class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Developer</label>
-                        <input type="text" id="edit-kompilasi-developer" class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                        <input type="text" id="edit-kompilasi-developer" class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Narahubung</label>
-                        <input type="text" id="edit-kompilasi-narahubung" class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                        <input type="text" id="edit-kompilasi-narahubung" class="mt-1 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Link Logo (URL)</label>
-                    <input type="text" id="edit-kompilasi-logo" class="mt-1 w-full p-3 border border-gray-300 rounded-md">
+                <!-- UPDATE: Input Logo (Radio + File) - Menggunakan ID Unik -->
+                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Logo Aplikasi</label>
+                    <!-- Input tersembunyi untuk menyimpan logo lama -->
+                    <input type="hidden" id="edit-kompilasi-existing-logo">
+
+                    <div class="flex items-center space-x-4 mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="edit_kompilasi_logo_option" value="default" class="text-accent focus:ring-accent border-gray-300" onchange="toggleKompilasiLogoInput(this.value)">
+                            <span class="ml-2 text-gray-700 text-sm">Default (Logo BPS)</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="edit_kompilasi_logo_option" value="upload" class="text-accent focus:ring-accent border-gray-300" onchange="toggleKompilasiLogoInput(this.value)">
+                            <span class="ml-2 text-gray-700 text-sm">Upload / Custom</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Container Upload -->
+                    <div id="edit-kompilasi-logo-upload-container" class="hidden">
+                        <!-- Preview -->
+                        <div class="mb-3 flex flex-col items-center sm:items-start">
+                            <span class="text-xs text-gray-500 mb-1">Preview saat ini:</span>
+                            <div id="edit-kompilasi-logo-preview" class="w-24 h-24 bg-white border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden p-2">
+                                <!-- Logo akan di-render di sini -->
+                            </div>
+                        </div>
+
+                        <input type="file" id="edit-kompilasi-logo-file" accept="image/png, image/jpeg, image/webp" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent-light file:text-accent hover:file:bg-blue-100">
+                        <p class="mt-1 text-xs text-gray-500">Format: PNG, JPG, WEBP. Maksimal 2 MB. <br>(Biarkan kosong jika tidak ingin mengubah gambar)</p>
+                    </div>
                 </div>
                 
                  <div>
                     <label class="block text-sm font-medium text-gray-700">Status Aplikasi (Label)</label>
-                    <select id="edit-kompilasi-status" class="mt-1 w-full p-3 border border-gray-300 rounded-md bg-white">
+                    <select id="edit-kompilasi-status" class="mt-1 w-full p-3 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-accent focus:border-accent">
                         <option value="Aktif">Aktif</option>
                         <option value="Tidak Aktif">Tidak Aktif</option>
                         <option value="Dilaporkan">Dilaporkan</option>
@@ -136,10 +166,11 @@
                 </div>
             </div>
 
-            <!-- Footer (Tetap di bawah) -->
-            <div class="p-5 border-t bg-gray-50 flex justify-end space-x-3 rounded-b-lg sticky bottom-0">
-                <button type="button" onclick="closeModal('modal-kompilasi-edit')" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Batal</button>
-                <button type="submit" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark">Simpan Perubahan</button>
+            <!-- Footer (Sticky Bottom) -->
+            <div class="p-5 border-t bg-gray-50 flex justify-end space-x-3 sticky bottom-0 z-10">
+                <p id="modal-kompilasi-edit-error" class="hidden text-sm text-red-600 mb-4 self-center mr-auto"></p>
+                <button type="button" onclick="closeModal('modal-kompilasi-edit')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark transition-colors">Simpan Perubahan</button>
             </div>
         </form>
     </div>

@@ -21,7 +21,9 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors()); // Mengizinkan Cross-Origin
-app.use(express.json()); // Mem-parsing body JSON
+// app.use(express.json()); // Mem-parsing body JSON
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // --- Rute API ---
 
