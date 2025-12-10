@@ -128,7 +128,7 @@ function renderKlilinkTable() {
             </label>
         `;
 
-        // --- UPDATE: Tombol Aksi menggunakan Ikon SVG ---
+        // Tombol Aksi (SVG)
         const editBtn = `
             <button onclick="openKlilinkEdit(${item.id_link})" class="text-accent hover:text-accent-dark mr-3 transition-colors" title="Edit">
                 <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -192,9 +192,10 @@ function populateKlilinkKategori(data) {
 window.changeKlilinkPage = function(p) {
     klilinkPage = p;
     renderKlilinkTable();
+    const tableTop = document.getElementById('klilink-table-container');
+    if(tableTop) tableTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Handler Toggle View
 window.toggleKlilinkView = async function(id, isChecked) {
     try {
         const res = await fetch(`http://localhost:5000/api/klilink/${id}/toggle`, {
@@ -276,12 +277,22 @@ function attachKlilinkListeners() {
     document.getElementById('form-klilink-edit')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('edit-klilink-id').value;
+
+        // --- PERBAIKAN: Ambil flagview yang ada ---
+        let currentFlag = 1; // Default aktif untuk link baru
+        if (id) {
+            // Jika edit, cari item aslinya untuk mempertahankan nilai flagview
+            const existingItem = allKlilinks.find(i => i.id_link == id);
+            if (existingItem) currentFlag = existingItem.flagview;
+        }
+        
         const data = {
             nama: document.getElementById('edit-klilink-nama').value,
             kategori: document.getElementById('edit-klilink-kategori').value,
             keterangan: document.getElementById('edit-klilink-keterangan').value,
             link: document.getElementById('edit-klilink-url').value,
-            password: document.getElementById('edit-klilink-password').value
+            password: document.getElementById('edit-klilink-password').value,
+            flagview: currentFlag // Masukkan flagview ke payload
         };
 
         let url = 'http://localhost:5000/api/klilink';
