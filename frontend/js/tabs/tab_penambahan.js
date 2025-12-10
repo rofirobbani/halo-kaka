@@ -1,4 +1,5 @@
 // --- File: frontend/js/tabs/tab_penambahan.js ---
+// File ini berisi semua logika JavaScript KHUSUS untuk tab 'Penambahan'.
 
 // --- Variabel Global untuk Tab Ini ---
 let allSubmissions = []; 
@@ -13,9 +14,9 @@ const itemsPerPage = 10;
 // --- Konstanta SVG Default ---
 const DEFAULT_BPS_LOGO = `<svg class="w-full h-full text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>`;
 
+
 // --- Fungsi Global Window (untuk dipanggil onclick HTML) ---
 
-// Fungsi Toggle Logo Input (Edit/Add)
 window.toggleEditLogoInput = function(value) {
     const uploadContainer = document.getElementById('edit-logo-upload-container');
     if (!uploadContainer) return;
@@ -24,16 +25,11 @@ window.toggleEditLogoInput = function(value) {
         uploadContainer.classList.remove('hidden');
     } else {
         uploadContainer.classList.add('hidden');
-        // Reset input file jika pilih default
         document.getElementById('edit-logo-file').value = '';
-        // Reset preview ke default (opsional, tapi baik)
         document.getElementById('edit-logo-preview').innerHTML = DEFAULT_BPS_LOGO;
     }
 }
 
-/**
- * Helper: Convert File to Base64
- */
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -43,10 +39,7 @@ const convertToBase64 = (file) => {
     });
 };
 
-
-/**
- * Fungsi Inisialisasi
- */
+// --- INIT ---
 async function initTabPenambahan() {
     console.log("Logika tab_penambahan.js berhasil dimuat!");
     const loadingEl = document.getElementById('penambahan-loading');
@@ -64,9 +57,6 @@ async function initTabPenambahan() {
     attachTabListeners();
 }
 
-/**
- * Load Data
- */
 async function loadSubmissionData() {
     const loadingEl = document.getElementById('penambahan-loading');
     const noDataEl = document.getElementById('penambahan-no-data');
@@ -94,7 +84,6 @@ async function loadSubmissionData() {
         
         if(loadingEl) loadingEl.style.display = 'none'; 
         
-        // Render ulang (yang akan mengurus pagination & filter)
         handleFilterChange();
 
     } catch (error) {
@@ -171,9 +160,25 @@ function renderSubmissionTable() {
         let actionButtons = '';
         const canEditDelete = (app.status_aplikasi === 'Menunggu Persetujuan');
         
-        const editBtn = `<button data-id="${app.id_add_app}" class="btn-edit text-indigo-600 hover:text-indigo-900 ${!canEditDelete && userRole !== 'Admin' ? 'opacity-50 cursor-not-allowed' : ''}" ${!canEditDelete && userRole !== 'Admin' ? 'disabled' : ''}>Edit</button>`;
-        const deleteBtn = `<button data-id="${app.id_add_app}" class="btn-delete text-red-600 hover:text-red-900 ml-4 ${!canEditDelete && userRole !== 'Admin' ? 'opacity-50 cursor-not-allowed' : ''}" ${!canEditDelete && userRole !== 'Admin' ? 'disabled' : ''}>Delete</button>`;
-        const approveBtn = `<button data-id="${app.id_add_app}" class="btn-approve text-green-600 hover:text-green-900 ml-4">Approve</button>`;
+        // --- PERBAIKAN: Menggunakan Ikon SVG untuk Tombol ---
+        
+        // Tombol Edit
+        const editBtn = `
+            <button data-id="${app.id_add_app}" class="btn-edit text-accent hover:text-accent-dark mr-3 transition-colors ${!canEditDelete && userRole !== 'Admin' ? 'opacity-50 cursor-not-allowed' : ''}" ${!canEditDelete && userRole !== 'Admin' ? 'disabled' : ''} title="Edit">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </button>`;
+            
+        // Tombol Delete
+        const deleteBtn = `
+            <button data-id="${app.id_add_app}" class="btn-delete text-red-500 hover:text-red-700 transition-colors ${!canEditDelete && userRole !== 'Admin' ? 'opacity-50 cursor-not-allowed' : ''}" ${!canEditDelete && userRole !== 'Admin' ? 'disabled' : ''} title="Delete">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>`;
+        
+        // Tombol Approve (Admin Only) - Tetap teks agar jelas, atau bisa pakai icon check
+        const approveBtn = `
+            <button data-id="${app.id_add_app}" class="btn-approve text-green-600 hover:text-green-800 ml-3 transition-colors" title="Approve">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </button>`;
 
         if (userRole === 'Admin') {
             actionButtons = editBtn + deleteBtn + approveBtn;
@@ -184,14 +189,11 @@ function renderSubmissionTable() {
         // Logo Preview di Tabel
         const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
             ? app.logo.replace('w-full h-full', 'w-8 h-8')
-            : (app.logo ? `<img src="${app.logo}" class="w-8 h-8 object-contain">` : `<span class="text-lg font-bold text-accent">${app.nama.substring(0,2).toUpperCase()}</span>`)
-
-            
+            : (app.logo ? `<img src="${app.logo}" class="w-8 h-8 object-contain">` : `<span class="text-gray-400 text-xs">N/A</span>`);
 
         const row = `
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <!-- Klik nama/logo untuk VIEW details -->
                     <button class="btn-view flex items-center text-left w-full hover:opacity-75" data-id="${app.id_add_app}">
                         <div class="flex-shrink-0 h-10 w-10 bg-accent-light rounded-md flex items-center justify-center text-accent p-1">
                             ${logoHtml}
@@ -249,10 +251,13 @@ function attachTabListeners() {
 
     document.getElementById('penambahan-table-body')?.addEventListener('click', (e) => {
         const target = e.target;
-        const button = target.closest('button[data-id]');
+        // Cari tombol terdekat (karena kita klik ikon svg)
+        const button = target.closest('button');
         if (!button) return;
 
         const appId = button.getAttribute('data-id');
+        if (!appId) return; // Jika klik tombol view tanpa data-id (jarang terjadi)
+        
         const appData = allSubmissions.find(app => app.id_add_app == appId);
         if (!appData) return;
 
@@ -274,22 +279,17 @@ function attachTabListeners() {
     });
     document.getElementById('penambahan-filter-status')?.addEventListener('change', handleFilterChange);
     
-    // Pasang listener untuk submit form modal
     document.getElementById('form-add-edit').addEventListener('submit', handleAddEditSubmit);
     document.getElementById('form-delete-confirm').addEventListener('submit', handleDeleteSubmit);
     document.getElementById('form-approve-admin').addEventListener('submit', handleApproveSubmit);
     
-    // Listener untuk preview file upload
     document.getElementById('edit-logo-file').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (file) {
             try {
                 const base64 = await convertToBase64(file);
-                const previewDiv = document.getElementById('edit-logo-preview');
-                previewDiv.innerHTML = `<img src="${base64}" class="w-full h-full object-contain">`;
-            } catch (err) {
-                console.error("Gagal preview", err);
-            }
+                document.getElementById('edit-logo-preview').innerHTML = `<img src="${base64}" class="w-full h-full object-contain">`;
+            } catch (err) { console.error(err); }
         }
     });
 }
@@ -330,12 +330,9 @@ function openAddEditModal(appData) {
     form.reset();
     document.getElementById('modal-add-edit-error').style.display = 'none'; 
     
-    // Helper untuk reset preview
     const previewDiv = document.getElementById('edit-logo-preview');
     const existingLogoInput = document.getElementById('edit-existing-logo');
-    const fileInputContainer = document.getElementById('edit-logo-upload-container');
     
-    // Reset Radio Buttons
     const radioDefault = document.querySelector('input[name="edit_logo_option"][value="default"]');
     const radioUpload = document.querySelector('input[name="edit_logo_option"][value="upload"]');
 
@@ -351,18 +348,14 @@ function openAddEditModal(appData) {
         document.getElementById('edit-developer').value = appData.developer;
         document.getElementById('edit-narahubung').value = appData.narahubung;
         
-        // LOGIKA LOGO EDIT
-        existingLogoInput.value = appData.logo || ''; // Simpan logo lama
+        existingLogoInput.value = appData.logo || '';
         
         if (!appData.logo || appData.logo.includes('<svg')) {
-            // Jika logo lama adalah SVG Default
             radioDefault.checked = true;
             toggleEditLogoInput('default');
         } else {
-            // Jika logo lama adalah gambar/custom
             radioUpload.checked = true;
             toggleEditLogoInput('upload');
-            // Tampilkan preview logo lama
             previewDiv.innerHTML = `<img src="${appData.logo}" class="w-full h-full object-contain">`;
         }
         
@@ -371,7 +364,6 @@ function openAddEditModal(appData) {
         title.innerText = "Tambah Aplikasi Baru";
         document.getElementById('edit-app-id').value = '';
         existingLogoInput.value = '';
-        // Default ke 'default logo'
         radioDefault.checked = true;
         toggleEditLogoInput('default');
     }
@@ -392,14 +384,13 @@ function openApproveModal(appData) {
     if(typeof openModal === 'function') openModal('modal-approve-admin');
 }
 
-// --- Fungsi Submit Handler ---
+// --- Submit Handlers ---
 
 async function handleAddEditSubmit(e) {
     e.preventDefault();
     const errorEl = document.getElementById('modal-add-edit-error');
     const form = document.getElementById('form-add-edit');
     
-    // Siapkan data
     const data = {
         nama: document.getElementById('edit-nama').value,
         tahun_buat: document.getElementById('edit-tahun').value,
@@ -410,18 +401,15 @@ async function handleAddEditSubmit(e) {
         narahubung: document.getElementById('edit-narahubung').value,
     };
 
-    // LOGIKA LOGO PADA SUBMIT
     const logoOption = document.querySelector('input[name="edit_logo_option"]:checked').value;
     let finalLogo = DEFAULT_BPS_LOGO;
 
     if (logoOption === 'default') {
         finalLogo = DEFAULT_BPS_LOGO;
     } else {
-        // Opsi Upload
         const fileInput = document.getElementById('edit-logo-file');
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
-            // Validasi size
             if (file.size > 2 * 1024 * 1024) {
                 errorEl.innerText = "Ukuran file terlalu besar (Maks 2MB)";
                 errorEl.style.display = 'block';
@@ -430,19 +418,15 @@ async function handleAddEditSubmit(e) {
             try {
                 finalLogo = await convertToBase64(file);
             } catch (err) {
-                console.error("Gagal convert gambar", err);
                 errorEl.innerText = "Gagal memproses gambar.";
                 errorEl.style.display = 'block';
                 return;
             }
         } else {
-            // Tidak ada file baru dipilih -> Gunakan logo lama (jika ada)
             const existing = document.getElementById('edit-existing-logo').value;
             if (existing && !existing.includes('<svg')) {
                  finalLogo = existing;
             } else {
-                 // Jika sebelumnya default, dan user pilih upload tapi tdk upload file -> Tetap default? atau error?
-                 // Kita kembalikan ke default untuk keamanan
                  finalLogo = DEFAULT_BPS_LOGO; 
             }
         }

@@ -155,17 +155,27 @@
         </div>
 
         <!-- Kontrol Tampilan (Grid/List) -->
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-6">
             <!-- Teks info halaman -->
             <p id="page-info" class="text-sm text-gray-600">Menampilkan 0 dari 0 aplikasi</p>
-            <div class="flex items-center space-x-2">
-                <span class="text-sm text-gray-600 mr-1 hidden sm:block">Tampilan:</span>
-                <button id="view-grid" class="p-2 rounded-lg bg-accent-light text-accent mr-2">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                </button>
-                <button id="view-list" class="p-2 rounded-lg bg-gray-200 text-gray-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-                </button>
+            
+            <div class="flex items-center space-x-2">               
+                <!-- UPDATE: Struktur Toggle View dengan Background Sliding -->
+                <div class="relative flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200 w-24 h-10">
+                    <!-- Background Bergerak (Pill Putih) -->
+                    <div id="toggle-slide" class="absolute left-1 top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-md shadow-sm transition-all duration-300 ease-in-out border border-gray-200"></div>
+                    
+                    <!-- Tombol Grid -->
+                    <button id="view-grid" class="relative z-10 w-1/2 h-full flex justify-center items-center rounded-md text-accent hover:text-gray-700 transition-colors duration-300" title="Grid View">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </button>
+                    
+                    <!-- Tombol List -->
+                    <button id="view-list" class="relative z-10 w-1/2 h-full flex justify-center items-center rounded-md text-gray-500 hover:text-gray-700 transition-colors duration-300" title="List View">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+                    </button>
+                </div>
+                <!-- AKHIR UPDATE -->
             </div>
         </div>
 
@@ -206,6 +216,7 @@
             <!-- Modal Body -->
             <div class="p-6 md:p-8 overflow-y-auto">
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+                    <!-- UPDATE: Menambahkan 'p-4' agar logo memiliki ruang dan tidak menempel -->
                     <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-accent-light rounded-lg flex items-center justify-center text-gray-500 overflow-hidden mx-auto md:mx-0 p-4" id="modal-logo"></div>
                     <div class="flex-grow">
                         <div class="grid grid-cols-2 gap-4 text-sm">
@@ -308,7 +319,7 @@
             
             // --- State untuk Pagination ---
             let currentPage = 1;
-            const itemsPerPage = 10; // Menampilkan 10 item per halaman
+            const itemsPerPage = 12; // Menampilkan 10 item per halaman
 
             // --- Elemen DOM (Spesifik Halaman) ---
             const container = document.getElementById('aplikasi-container');
@@ -320,6 +331,8 @@
             const noResults = document.getElementById('no-results');
             const viewGridBtn = document.getElementById('view-grid');
             const viewListBtn = document.getElementById('view-list');
+            const toggleSlide = document.getElementById('toggle-slide'); // BARU: Background bergerak
+            
             const loadingContainer = document.getElementById('loading-container');
             const errorContainer = document.getElementById('error-container');
             const errorMessage = document.getElementById('error-message'); 
@@ -331,25 +344,20 @@
 
             // --- BARU: Fungsi Track Visit (Ditempatkan di sini dan di-attach ke window) ---
             window.trackVisit = async function(id, event) {
-                // Mencegah klik tombol "Open" memicu onclick pada container (yang membuka modal)
                 if (event) event.stopPropagation();
 
                 try {
-                    // Panggil API secara asinkron (fire-and-forget)
                     fetch(`http://localhost:5000/api/aplikasi/${id}/visit`, { method: 'POST' });
                     console.log(`Mencatat kunjungan untuk App ID: ${id}`);
                 } catch (e) {
                     console.error("Gagal mencatat kunjungan", e);
                 }
-                // Browser akan melanjutkan navigasi ke href secara otomatis
             };
 
             // --- Fungsi Render Tampilan ---
-            
             function renderAplikasi(view) {
                 if (!container) return; 
-                
-                container.innerHTML = ''; // Kosongkan kontainer
+                container.innerHTML = ''; 
                 
                 const totalFiltered = filteredAplikasi.length;
 
@@ -369,7 +377,6 @@
                 const endIndex = startIndex + itemsPerPage;
                 const itemsToRender = filteredAplikasi.slice(startIndex, endIndex);
 
-                // Update info halaman
                 const endInfo = Math.min(endIndex, totalFiltered);
                 pageInfo.innerText = `Menampilkan ${startIndex + 1}-${endInfo} dari ${totalFiltered} aplikasi`;
 
@@ -389,22 +396,20 @@
             function renderGrid(app) {
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
                     ? app.logo 
-                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-contain">` 
                     : `<svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>`);
                 
-                // Menentukan warna badge status
                 const statusClass = app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
 
                 return `
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer border border-gray-100 flex flex-col h-full" onclick="openDetailModal('${app.id_app}')">
-                        <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden flex-shrink-0">
+                        <div class="h-40 bg-accent-light flex items-center justify-center text-gray-400 overflow-hidden flex-shrink-0 p-4">
                             ${logoHtml}
                         </div>
                         <div class="p-5 flex flex-col flex-grow">
                             <h3 class="text-xl font-semibold text-gray-800 mb-1 truncate" title="${app.nama}">${app.nama}</h3>
                             <span class="text-sm text-accent mb-4 block">${app.kategori || ''}</span>
                             
-                            <!-- REPLACED: Status Badge menggantikan tombol Open -->
                             <div class="flex justify-between items-center mt-auto">
                                 <span class="text-xs font-medium text-gray-600 truncate w-1/2" title="${app.developer}">${app.developer || ''}</span>
                                 <span class="text-xs px-2 py-1 rounded-full ${statusClass} whitespace-nowrap">
@@ -419,15 +424,14 @@
             function renderList(app) {
                 const logoHtml = (app.logo && app.logo.startsWith('<svg')) 
                     ? app.logo 
-                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-cover">` 
+                    : (app.logo ? `<img src="${app.logo}" alt="${app.nama}" class="w-full h-full object-contain">` 
                     : `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17.11l4.42-4.42a1 1 0 000-1.41l-4.42-4.42m6.34 8.84l4.42-4.42a1 1 0 000-1.41l-4.42-4.42"></path></svg>`);
 
-                // Menentukan warna badge status
                 const statusClass = app.status_aplikasi === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
 
                 return `
                     <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition duration-200 cursor-pointer" onclick="openDetailModal('${app.id_app}')">
-                        <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden">
+                        <div class="flex-shrink-0 w-12 h-12 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden p-1">
                             ${logoHtml}
                         </div>
                         <div class="flex-grow mx-4 min-w-0">
@@ -435,7 +439,6 @@
                             <p class="text-sm text-gray-500 truncate">${app.kategori || ''} | ${app.developer || ''}</p>
                         </div>
                         <div class="flex-shrink-0 flex items-center space-x-4 ml-auto">
-                            <!-- REPLACED: Status Badge menggantikan tombol Open -->
                             <span class="text-sm px-3 py-1 rounded-full ${statusClass}">
                                 ${app.status_aplikasi || 'N/A'}
                             </span>
@@ -447,7 +450,6 @@
             function applyFilters() {
                 currentPage = 1; 
                 const query = searchInput.value.toLowerCase();
-                // ... (Ambil filter values) ...
                 const kategoriFilter = filterKategori.value;
                 const developerFilter = filterDeveloper.value;
                 const tahunFilter = filterTahun.value;
@@ -457,20 +459,16 @@
                     const matchesQuery = (app.nama && app.nama.toLowerCase().includes(query)) ||
                                          (app.kategori && app.kategori.toLowerCase().includes(query)) ||
                                          (app.developer && app.developer.toLowerCase().includes(query));
-                    
                     const matchesKategori = !kategoriFilter || app.kategori === kategoriFilter;
                     const matchesDeveloper = !developerFilter || app.developer === developerFilter;
                     const matchesTahun = !tahunFilter || app.tahun_buat == tahunFilter;
                     const matchesStatus = !statusFilter || app.status_aplikasi === statusFilter;
-                    
                     return matchesQuery && matchesKategori && matchesDeveloper && matchesTahun && matchesStatus;
                 });
-                
                 renderAplikasi(currentView);
             }
 
             function populateFilters(aplikasiArray) {
-                // ... (Logika populate filters sama) ...
                 const kategoriSet = new Set(aplikasiArray.map(app => app.kategori).filter(Boolean));
                 const developerSet = new Set(aplikasiArray.map(app => app.developer).filter(Boolean));
                 const tahunSet = new Set(aplikasiArray.map(app => app.tahun_buat).filter(Boolean));
@@ -491,7 +489,6 @@
                  const paginationEl = document.getElementById('pagination-controls');
                  if (!paginationEl) return;
                  paginationEl.innerHTML = ''; 
-
                  const totalPages = Math.ceil(totalItems / itemsPerPage);
                  if (totalPages <= 1) return;
 
@@ -527,7 +524,6 @@
                 document.getElementById('modal-pengunjung').innerText = app.jumlah_pengunjung || '0';
                 document.getElementById('modal-penjelasan').innerText = app.penjelasan || 'Tidak ada penjelasan.';
                 
-                // Update link dan pasang tracker
                 const modalLink = document.getElementById('modal-link');
                 modalLink.href = app.link || '#';
                 modalLink.onclick = () => trackVisit(app.id_app);
@@ -538,8 +534,6 @@
                 
                 openModal('modal-detail');
             };
-            
-            // ... (Load Data dan Event Listeners) ...
             
             (async function loadAplikasi() {
                 try {
@@ -583,12 +577,29 @@
             filterDeveloper.addEventListener('change', applyFilters);
             filterTahun.addEventListener('change', applyFilters);
             filterStatus.addEventListener('change', applyFilters);
+            
+            // UPDATE: Logika Toggle View Sliding
             viewGridBtn.addEventListener('click', () => {
                 currentView = 'grid';
+                
+                viewGridBtn.classList.replace('text-gray-500', 'text-accent');
+                viewListBtn.classList.replace('text-accent', 'text-gray-500');
+                
+                // Geser background ke kiri (0)
+                toggleSlide.style.transform = 'translateX(0)';
+                
                 renderAplikasi(currentView);
             });
+
             viewListBtn.addEventListener('click', () => {
                 currentView = 'list';
+                
+                viewListBtn.classList.replace('text-gray-500', 'text-accent');
+                viewGridBtn.classList.replace('text-accent', 'text-gray-500');
+                
+                // Geser background ke kanan (100% lebar tombol)
+                toggleSlide.style.transform = 'translateX(100%)';
+                
                 renderAplikasi(currentView);
             });
 

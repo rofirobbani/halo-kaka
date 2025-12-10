@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLILINK - Kumpulan Link Penting</title>
+    
+    <!-- Memuat Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent': '#3486d9',
+                        'accent-dark': '#2a6bb0',
+                        'accent-light': '#EBF4FF',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        .modal { display: none; transition: opacity 0.3s ease; }
+        .modal.flex { display: flex; }
+        #menu-toggle { display: none; }
+        #menu-toggle:checked + label + #mobile-menu { display: block; }
+        
+        /* Loading Spinner */
+        #loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3486d9;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Pagination */
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #D1D5DB;
+        }
+        .page-btn.active {
+            background-color: #3486d9; color: white; border-color: #3486d9;
+        }
+        .page-btn:not(.active):not(:disabled) {
+            background-color: white; color: #3F3F46;
+        }
+        .page-btn:not(.active):not(:disabled):hover {
+            background-color: #F9FAFB;
+        }
+        .page-btn:disabled {
+            background-color: #F3F4F6; color: #9CA3AF; cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50">
+
+    <!-- 1. HEADER (Placeholder) -->
+    <div id="header-placeholder"></div>
+
+    <main class="container mx-auto px-6 py-12 min-h-screen">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">KLILINK</h1>
+                <p class="text-gray-600">Kumpulan Link-link penting yang dapat membantu dalam menunjang aktivitas dan kebutuhan pegawai BPS.</p>
+                <p class="text-gray-600">Silakan akses dengan mudah sesuai keperluan Anda</p>    
+            </div>
+            <div class="flex space-x-3 mt-4 md:mt-0">
+                <button onclick="goToMyLinks()" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-300 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Link Saya
+                </button>
+                <button onclick="openTambahLinkModal()" class="bg-accent text-white px-4 py-2 rounded-lg font-medium hover:bg-accent-dark transition duration-300 flex items-center shadow-md">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Tambah Link
+                </button>
+            </div>
+        </div>
+
+        <!-- Kontrol: Pencarian dan Filter -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Pencarian -->
+                <div class="md:col-span-2">
+                    <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Cari Link</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="search-input" placeholder="Nama, Kategori, atau Pembuat..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-accent focus:border-accent sm:text-sm">
+                    </div>
+                </div>
+                <!-- Filter Kategori -->
+                <div>
+                    <label for="filter-kategori" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                    <select id="filter-kategori" class="block w-full p-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm">
+                        <option value="">Semua Kategori</option>
+                        <!-- Opsi diisi oleh JS -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info & Toggle View -->
+        <div class="flex justify-between items-center mb-6">
+            <p id="page-info" class="text-sm text-gray-600">Menampilkan 0 link</p>
+            
+            <!-- UPDATE: Toggle View dengan Efek Slide (Konsisten) -->
+            <div class="relative flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200 w-24 h-10">
+                <!-- Background Bergerak (Pill Putih) -->
+                <div id="toggle-slide" class="absolute left-1 top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-md shadow-sm transition-all duration-300 ease-in-out border border-gray-200"></div>
+                
+                <!-- Tombol Grid -->
+                <button id="view-grid" class="relative z-10 w-1/2 h-full flex justify-center items-center rounded-md text-accent hover:text-gray-700 transition-colors duration-300" title="Grid View">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                </button>
+                
+                <!-- Tombol List -->
+                <button id="view-list" class="relative z-10 w-1/2 h-full flex justify-center items-center rounded-md text-gray-500 hover:text-gray-700 transition-colors duration-300" title="List View">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <!-- AKHIR UPDATE -->
+
+        </div>
+
+        <!-- Kontainer Data -->
+        <div id="loading-container" class="flex justify-center items-center py-16">
+            <div id="loading-spinner"></div>
+            <p class="ml-4 text-gray-600">Memuat data link...</p>
+        </div>
+        
+        <div id="klilink-container" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Data akan diisi oleh JS -->
+        </div>
+        
+        <div id="no-results" class="hidden flex flex-col items-center justify-center py-16 text-center bg-white rounded-xl border border-dashed border-gray-300">
+            <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-gray-500">Tidak ada link yang ditemukan.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-controls" class="flex justify-center items-center space-x-2 mt-10"></div>
+    </main>
+
+    <!-- 5. FOOTER (Placeholder) -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- 6. MODALS (Placeholder) -->
+    <div id="modals-placeholder"></div>
+
+    <!-- ================= MODAL TAMBAH LINK ================= -->
+    <div id="modal-tambah-link" class="modal fixed inset-0 z-[60] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg flex flex-col max-h-[90vh]">
+            <!-- Header (Sticky) -->
+            <div class="flex justify-between items-center p-5 border-b bg-white rounded-t-lg sticky top-0 z-10">
+                <h3 class="text-xl font-bold text-gray-800">Tambah Link Baru</h3>
+                <button onclick="closeModal('modal-tambah-link')" class="text-gray-400 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Body (Scrollable) -->
+            <form id="form-tambah-link" class="flex flex-col h-full overflow-hidden">
+                <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nama Link</label>
+                        <input type="text" name="nama" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Contoh: Laporan Bulanan...">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                        <input type="text" name="kategori" list="kategori-list" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Pilih atau ketik baru...">
+                        <datalist id="kategori-list">
+                            <option value="Laporan">
+                            <option value="Rapat">
+                            <option value="Administrasi">
+                            <option value="Publikasi">
+                        </datalist>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Keterangan</label>
+                        <textarea name="keterangan" rows="2" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="Deskripsi singkat..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">URL / Tautan</label>
+                        <input type="url" name="link" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent" placeholder="https://...">
+                    </div>
+                    
+                    <!-- Password Toggle -->
+                    <div class="pt-2 p-4 bg-yellow-50 rounded-md border border-yellow-200">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-password-link" class="rounded text-accent focus:ring-accent border-gray-300">
+                            <span class="ml-2 text-sm font-medium text-gray-700">Gunakan Password untuk link ini?</span>
+                        </label>
+                        
+                        <div id="password-input-container" class="hidden mt-3">
+                            <label class="block text-sm font-medium text-gray-700">Password Link</label>
+                            <input type="text" name="password" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm bg-white focus:ring-accent focus:border-accent" placeholder="Masukkan password akses...">
+                            <p class="text-xs text-gray-500 mt-1">Password akan disimpan sebagai teks biasa (untuk kemudahan berbagi).</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer (Sticky Bottom) -->
+                <div class="p-5 border-t bg-gray-50 flex justify-end space-x-3 rounded-b-lg sticky bottom-0 z-10">
+                    <button type="button" onclick="closeModal('modal-tambah-link')" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-gray-700 font-medium transition-colors">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark font-medium shadow-lg transition-colors">Simpan Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BARU: MODAL CEK PASSWORD -->
+    <div id="modal-cek-password" class="modal fixed inset-0 z-[70] bg-black bg-opacity-60 items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm flex flex-col">
+            <div class="p-5 border-b bg-gray-50 rounded-t-lg">
+                <h3 class="text-lg font-bold text-gray-800">Link Terproteksi</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-600 mb-4">Link ini dilindungi password. Silakan masukkan password untuk melanjutkan.</p>
+                <form id="form-cek-password">
+                    <!-- Kita simpan ID link, bukan URL asli -->
+                    <input type="hidden" id="target-link-id">
+                    
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="input-cek-password" required class="block w-full p-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent" placeholder="Password..." autocomplete="off">
+                    <p id="msg-cek-password" class="text-xs text-red-600 mt-2 hidden">Password salah!</p>
+                    
+                    <div class="mt-6 flex justify-end space-x-2">
+                        <button type="button" onclick="closeModal('modal-cek-password')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Batal</button>
+                        <button type="submit" class="px-3 py-2 bg-accent text-white rounded hover:bg-accent-dark">Buka Link</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. SCRIPT -->
+    <script src="js/main.js" defer></script>
+    
+    <!-- Script Khusus Halaman Ini -->
+    <script>
+        function attachPageSpecificListeners() {
+            // --- State ---
+            let allLinks = [];
+            let filteredLinks = [];
+            let currentPage = 1;
+            const itemsPerPage = 12;
+            let currentView = 'grid';
+
+            // --- Init ---
+            loadKlilinkData();
+            
+            // --- Listeners ---
+            const searchInput = document.getElementById('search-input');
+            const filterKategori = document.getElementById('filter-kategori');
+            const viewGridBtn = document.getElementById('view-grid');
+            const viewListBtn = document.getElementById('view-list');
+            const toggleSlide = document.getElementById('toggle-slide'); // Background bergerak
+
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(applyFilters, 300);
+            });
+
+            filterKategori.addEventListener('change', applyFilters);
+
+            // UPDATE: Logika Toggle View Sliding
+            viewGridBtn.addEventListener('click', () => {
+                currentView = 'grid';
+                
+                viewGridBtn.classList.replace('text-gray-500', 'text-accent');
+                viewListBtn.classList.replace('text-accent', 'text-gray-500');
+                
+                // Geser background ke kiri (0)
+                toggleSlide.style.transform = 'translateX(0)';
+                
+                renderLinks();
+            });
+
+            viewListBtn.addEventListener('click', () => {
+                currentView = 'list';
+                
+                viewListBtn.classList.replace('text-gray-500', 'text-accent');
+                viewGridBtn.classList.replace('text-accent', 'text-gray-500');
+                
+                // Geser background ke kanan (100% lebar tombol)
+                toggleSlide.style.transform = 'translateX(100%)';
+                
+                renderLinks();
+            });
+
+            // Toggle Password Input
+            document.getElementById('toggle-password-link').addEventListener('change', function() {
+                const container = document.getElementById('password-input-container');
+                if (this.checked) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                    container.querySelector('input').value = ''; // Clear password
+                }
+            });
+
+            // Submit Form Tambah Link
+            document.getElementById('form-tambah-link').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Validasi token (harus login)
+                const token = localStorage.getItem('haloKakaToken');
+                if (!token) {
+                    alert("Sesi Anda berakhir. Silakan login kembali.");
+                    return;
+                }
+
+                const btn = this.querySelector('button[type="submit"]');
+                const originalText = btn.innerText;
+                btn.disabled = true;
+                btn.innerText = 'Menyimpan...';
+
+                try {
+                    const res = await fetch('http://localhost:5000/api/klilink', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (res.ok) {
+                        alert('Link berhasil ditambahkan!');
+                        closeModal('modal-tambah-link');
+                        this.reset();
+                        document.getElementById('password-input-container').classList.add('hidden');
+                        loadKlilinkData(); // Reload data
+                    } else {
+                        const err = await res.json();
+                        alert(`Gagal: ${err.message}`);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Terjadi kesalahan koneksi.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            });
+
+            // --- Logic Cek Password ---
+            document.getElementById('form-cek-password').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const linkId = document.getElementById('target-link-id').value;
+                const passwordAttempt = document.getElementById('input-cek-password').value;
+                const msgEl = document.getElementById('msg-cek-password');
+                const btn = this.querySelector('button[type="submit"]');
+
+                // Disable button
+                btn.disabled = true;
+                btn.innerText = "Memeriksa...";
+
+                try {
+                    // Panggil API Backend untuk verifikasi
+                    const res = await fetch('http://localhost:5000/api/klilink/access', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_link: linkId, password_attempt: passwordAttempt })
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        // Sukses! Backend mengembalikan URL asli
+                        closeModal('modal-cek-password');
+                        window.open(data.real_link, '_blank');
+                    } else {
+                        // Gagal
+                        msgEl.innerText = data.message || "Password salah!";
+                        msgEl.classList.remove('hidden');
+                        const input = document.getElementById('input-cek-password');
+                        input.classList.add('border-red-500');
+                        input.select();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    msgEl.innerText = "Terjadi kesalahan koneksi.";
+                    msgEl.classList.remove('hidden');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "Buka Link";
+                }
+            });
+
+            // --- Functions ---
+
+            async function loadKlilinkData() {
+                const loading = document.getElementById('loading-container');
+                const container = document.getElementById('klilink-container');
+                const noResults = document.getElementById('no-results');
+                
+                loading.style.display = 'flex';
+                container.classList.add('hidden');
+                noResults.classList.add('hidden');
+
+                try {
+                    // Cek token (opsional, untuk melihat link private user)
+                    const token = localStorage.getItem('haloKakaToken');
+                    const headers = {};
+                    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                    const res = await fetch('http://localhost:5000/api/klilink', { headers });
+                    if (!res.ok) throw new Error('Gagal mengambil data');
+                    
+                    allLinks = await res.json();
+                    filteredLinks = allLinks;
+
+                    populateKategoriFilter(allLinks);
+                    renderLinks();
+
+                } catch (error) {
+                    console.error("Error loading links:", error);
+                    container.innerHTML = `<p class="text-red-500 text-center w-full">Gagal memuat data link. Pastikan server berjalan.</p>`;
+                    container.classList.remove('hidden');
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }
+
+            function populateKategoriFilter(data) {
+                const kategoris = new Set(data.map(item => item.kategori).filter(Boolean));
+                const select = document.getElementById('filter-kategori');
+                select.innerHTML = '<option value="">Semua Kategori</option>';
+                kategoris.forEach(cat => {
+                    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+                });
+            }
+
+            function applyFilters() {
+                const query = searchInput.value.toLowerCase();
+                const kategori = filterKategori.value;
+
+                filteredLinks = allLinks.filter(item => {
+                    const matchQuery = (item.nama && item.nama.toLowerCase().includes(query)) ||
+                                       (item.keterangan && item.keterangan.toLowerCase().includes(query)) ||
+                                       (item.pembuat && item.pembuat.toLowerCase().includes(query));
+                    const matchCat = !kategori || item.kategori === kategori;
+                    return matchQuery && matchCat;
+                });
+
+                currentPage = 1;
+                renderLinks();
+            }
+
+            function renderLinks() {
+                const container = document.getElementById('klilink-container');
+                const noResults = document.getElementById('no-results');
+                const pageInfo = document.getElementById('page-info');
+                
+                container.innerHTML = '';
+
+                if (filteredLinks.length === 0) {
+                    container.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                    pageInfo.innerText = 'Menampilkan 0 link';
+                    setupPagination(0);
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                noResults.classList.add('hidden');
+                
+                // Grid class adjust based on view
+                if (currentView === 'grid') {
+                    container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
+                } else {
+                    container.className = 'flex flex-col space-y-4';
+                }
+
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const items = filteredLinks.slice(start, end);
+                
+                pageInfo.innerText = `Menampilkan ${start + 1}-${Math.min(end, filteredLinks.length)} dari ${filteredLinks.length} link`;
+
+                items.forEach(item => {
+                    // PERUBAHAN PENTING DI SINI:
+                    // Kita lewatkan 'item.has_password' (boolean) dan 'item.id_link'
+                    // Kita TIDAK MELEWATKAN 'item.link' (karena mungkin null) atau 'item.password'
+                    const card = createLinkCard(item, currentView);
+                    container.innerHTML += card;
+                });
+
+                setupPagination(filteredLinks.length);
+            }
+
+            function createLinkCard(item, view) {
+                // Cek apakah link memiliki password berdasarkan flag dari backend
+                const isProtected = item.has_password;
+                
+                const lockIcon = isProtected ? 
+                    `<span class="absolute top-3 right-3 text-yellow-500 bg-white rounded-full p-1 shadow-sm" title="Link Terproteksi">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                     </span>` : '';
+                
+                // Siapkan argumen untuk fungsi checkLinkPassword
+                // Jika protected, URL (item.link) akan null, jadi kita kirim ID.
+                // Jika tidak protected, kita kirim URL langsung.
+                // Kita ubah fungsi checkLinkPassword agar menerima ID dan Status Proteksi
+                const btnOnClick = `checkLinkPassword(${item.id_link}, ${isProtected}, '${item.link || ''}')`;
+
+                const btnAction = `<button onclick="${btnOnClick}" class="mt-3 block w-full py-2 px-4 bg-white border border-accent text-accent text-center rounded-lg hover:bg-accent hover:text-white transition-colors font-medium text-sm">
+                                    Buka Link
+                                   </button>`;
+                
+                const listAction = `<div class="flex items-center gap-3 shrink-0">
+                                        <button onclick="${btnOnClick}" class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-medium border border-green-100 hover:bg-green-100 transition-colors">
+                                            Buka Link
+                                        </button>
+                                        <button onclick="${btnOnClick}" class="text-gray-400 hover:text-accent transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </button>
+                                    </div>`;
+
+                // ... (Template Grid & List View HTML sama seperti sebelumnya, hanya btnAction yang berubah) ...
+                
+                if (view === 'grid') {
+                    return `
+                        <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-5 transition-all duration-300 relative flex flex-col h-full group">
+                            ${lockIcon}
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 rounded-lg bg-accent-light flex items-center justify-center text-accent font-bold text-lg shrink-0">
+                                    ${item.nama.substring(0, 1).toUpperCase()}
+                                </div>
+                                <div class="ml-3 overflow-hidden">
+                                    <h3 class="text-gray-900 font-semibold truncate" title="${item.nama}">${item.nama}</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">${item.kategori || 'Umum'}</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4 flex-grow line-clamp-3 text-left">${item.keterangan || '-'}</p>
+                            <div class="mt-auto">
+                                ${btnAction}
+                                <div class="mt-2 text-xs text-gray-400 text-center">Oleh: ${item.pembuat || 'Admin'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                     // ... (List View Template sama, gunakan ${listAction}) ...
+                     return `
+                        <div class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all duration-200 flex items-center gap-4 cursor-pointer group" onclick="${btnOnClick}">
+                            <div class="w-12 h-12 rounded-lg bg-accent-light flex items-center justify-center text-accent font-bold text-xl shrink-0">
+                                ${item.nama.substring(0, 1).toUpperCase()}
+                            </div>
+                            
+                            <div class="flex-grow min-w-0 flex flex-col justify-center">
+                                <div class="flex items-center">
+                                    <h3 class="text-gray-900 font-semibold text-base truncate group-hover:text-accent transition-colors mr-2">
+                                        ${item.nama}
+                                    </h3>
+                                    ${isProtected ? '<span class="text-yellow-500" title="Terproteksi Password"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></span>' : ''}
+                                </div>
+                                <p class="text-sm text-gray-500 truncate">
+                                    ${item.kategori || 'Umum'} <span class="mx-1 text-gray-300">|</span> ${item.pembuat || 'Admin'}
+                                </p>
+                            </div>
+
+                            ${listAction}
+                        </div>
+                    `;
+                }
+            }
+
+            // --- UPDATE: Logic Cek Password yang Aman ---
+            // Fungsi ini sekarang dipanggil saat tombol diklik
+            window.checkLinkPassword = function(id, isProtected, urlDirect) {
+                if (event) event.stopPropagation(); 
+
+                if (!isProtected) {
+                    // Jika tidak diproteksi, backend sudah mengirim URL asli. Langsung buka.
+                    if (urlDirect && urlDirect !== 'null') {
+                         window.open(urlDirect, '_blank');
+                    } else {
+                        alert("Error: Link tidak valid.");
+                    }
+                } else {
+                    // Jika diproteksi, backend mengirim URL 'null'. Buka modal untuk minta password.
+                    document.getElementById('target-link-id').value = id;
+                    document.getElementById('input-cek-password').value = '';
+                    document.getElementById('msg-cek-password').classList.add('hidden');
+                    
+                    if(typeof openModal === 'function') {
+                        openModal('modal-cek-password');
+                        // Fokus ke input
+                        setTimeout(() => document.getElementById('input-cek-password').focus(), 100);
+                    }
+                }
+            }
+
+            // --- Handler Submit Modal Password ---
+            document.getElementById('form-cek-password').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const linkId = document.getElementById('target-link-id').value;
+                const passwordAttempt = document.getElementById('input-cek-password').value;
+                const msgEl = document.getElementById('msg-cek-password');
+                const btn = this.querySelector('button[type="submit"]');
+
+                // Disable button
+                btn.disabled = true;
+                btn.innerText = "Memeriksa...";
+
+                try {
+                    // Panggil API Backend untuk verifikasi
+                    const res = await fetch('http://localhost:5000/api/klilink/access', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_link: linkId, password_attempt: passwordAttempt })
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        // Sukses! Backend mengembalikan URL asli
+                        closeModal('modal-cek-password');
+                        window.open(data.real_link, '_blank');
+                    } else {
+                        // Gagal
+                        msgEl.innerText = data.message || "Password salah!";
+                        msgEl.classList.remove('hidden');
+                        const input = document.getElementById('input-cek-password');
+                        input.classList.add('border-red-500');
+                        input.select();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    msgEl.innerText = "Terjadi kesalahan koneksi.";
+                    msgEl.classList.remove('hidden');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "Buka Link";
+                }
+            });
+            
+            function setupPagination(total) {
+                const container = document.getElementById('pagination-controls');
+                container.innerHTML = '';
+                const pages = Math.ceil(total / itemsPerPage);
+                if (pages <= 1) return;
+
+                // Prev
+                const prevBtn = document.createElement('button');
+                prevBtn.className = `page-btn ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`;
+                prevBtn.innerHTML = '&laquo; Prev';
+                prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; renderLinks(); }};
+                container.appendChild(prevBtn);
+
+                // Numbers
+                for(let i=1; i<=pages; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `page-btn ${i === currentPage ? 'active' : 'hover:bg-gray-50'}`;
+                    btn.innerText = i;
+                    btn.onclick = () => { currentPage = i; renderLinks(); };
+                    container.appendChild(btn);
+                }
+
+                // Next
+                const nextBtn = document.createElement('button');
+                nextBtn.className = `page-btn ${currentPage === pages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`;
+                nextBtn.innerHTML = 'Next &raquo;';
+                nextBtn.onclick = () => { if(currentPage < pages) { currentPage++; renderLinks(); }};
+                container.appendChild(nextBtn);
+            }
+        }
+        
+        // --- Global Helpers ---
+        window.openTambahLinkModal = function() {
+            const token = localStorage.getItem('haloKakaToken');
+            if (!token) {
+                alert("Silakan login terlebih dahulu untuk menambahkan link.");
+                if(typeof openModal === 'function') openModal('modal-login');
+                return;
+            }
+            if(typeof openModal === 'function') openModal('modal-tambah-link');
+        }
+
+        window.goToMyLinks = function() {
+            const token = localStorage.getItem('haloKakaToken');
+            if (!token) {
+                alert("Silakan login terlebih dahulu untuk melihat link Anda.");
+                if(typeof openModal === 'function') openModal('modal-login');
+            } else {
+                // Redirect to dashboard tab (we will create this tab logic later)
+                window.location.href = 'dashboard.html#klilink';
+            }
+        }
+
+        // PERBAIKAN: Fungsi Cek Password
+        window.checkLinkPassword = function(id, isProtected, urlDirect) {
+            // Stop propagation handled in onclick if needed, but here mainly used directly
+            if (event) event.stopPropagation(); 
+
+            if (!isProtected) {
+                // Jika tidak diproteksi, backend sudah mengirim URL asli. Langsung buka.
+                if (urlDirect && urlDirect !== 'null') {
+                     window.open(urlDirect, '_blank');
+                } else {
+                    alert("Error: Link tidak valid.");
+                }
+            } else {
+                // Jika diproteksi, backend mengirim URL 'null'. Buka modal untuk minta password.
+                document.getElementById('target-link-id').value = id;
+                document.getElementById('input-cek-password').value = '';
+                document.getElementById('msg-cek-password').classList.add('hidden');
+                
+                if(typeof openModal === 'function') {
+                    openModal('modal-cek-password');
+                    // Fokus ke input
+                    setTimeout(() => document.getElementById('input-cek-password').focus(), 100);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

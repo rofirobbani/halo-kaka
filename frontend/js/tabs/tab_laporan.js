@@ -160,22 +160,39 @@ function renderLaporanTable() {
         else if (item.status_laporan === 'Ditolak') statusClass = 'bg-red-100 text-red-800';
         else if (item.status_laporan === 'Sedang Diperbaiki') statusClass = 'bg-yellow-100 text-yellow-800';
 
-        // Logika Tombol Aksi
-        let btns = '';
+        // --- UPDATE: Logika Tombol dengan Ikon SVG ---
+        let actionButtons = '';
         
+        // Cek apakah user bisa mengedit/hapus (hanya jika status 'Baru')
+        const isLocked = (item.status_laporan === 'Selesai' || item.status_laporan === 'Sedang Diperbaiki');
+        const disabledClass = (isLocked && laporanRole !== 'Admin') ? 'opacity-50 cursor-not-allowed' : '';
+        const disabledAttr = (isLocked && laporanRole !== 'Admin') ? 'disabled' : '';
+
+        // Tombol Edit
+        const editBtn = `
+            <button data-id="${item.id_report_app}" class="btn-laporan-edit text-accent hover:text-accent-dark mr-3 transition-colors ${disabledClass}" ${disabledAttr} title="Edit">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </button>`;
+        
+        // Tombol Delete
+        const deleteBtn = `
+            <button data-id="${item.id_report_app}" class="btn-laporan-delete text-red-500 hover:text-red-700 transition-colors ${disabledClass}" ${disabledAttr} title="Delete">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>`;
+
+        // Tombol Status (Admin Only) - Menggunakan ikon Check Circle
+        let statusBtn = '';
         if (laporanRole === 'Admin') {
-            // Admin: Semua akses
-            btns += `<button data-id="${item.id_report_app}" class="btn-laporan-edit text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>`;
-            btns += `<button data-id="${item.id_report_app}" class="btn-laporan-delete text-red-600 hover:text-red-900 mr-3">Delete</button>`;
-            btns += `<button data-id="${item.id_report_app}" class="btn-laporan-status text-green-600 hover:text-green-900">Status</button>`;
+            statusBtn = `
+                <button data-id="${item.id_report_app}" class="btn-laporan-status text-green-600 hover:text-green-800 ml-3 transition-colors" title="Ubah Status">
+                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>`;
+        }
+
+        if (laporanRole === 'Admin') {
+            actionButtons = editBtn + deleteBtn + statusBtn;
         } else {
-            // User: Cek status (hanya bisa edit jika Belum diproses)
-            const isLocked = (item.status_laporan === 'Selesai' || item.status_laporan === 'Sedang Diperbaiki');
-            const disabledClass = isLocked ? 'opacity-50 cursor-not-allowed' : '';
-            const disabledAttr = isLocked ? 'disabled' : '';
-            
-            btns += `<button data-id="${item.id_report_app}" class="btn-laporan-edit text-indigo-600 hover:text-indigo-900 mr-3 ${disabledClass}" ${disabledAttr}>Edit</button>`;
-            btns += `<button data-id="${item.id_report_app}" class="btn-laporan-delete text-red-600 hover:text-red-900 ${disabledClass}" ${disabledAttr}>Delete</button>`;
+            actionButtons = editBtn + deleteBtn;
         }
 
         const row = `
@@ -185,7 +202,7 @@ function renderLaporanTable() {
                 <td class="px-6 py-4 text-sm text-gray-500 truncate max-w-xs" title="${item.keterangan}">${item.keterangan}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">${item.nama_pelapor}</td>
                 <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 text-xs rounded-full ${statusClass}">${item.status_laporan}</span></td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${btns}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${actionButtons}</td>
             </tr>
         `;
         tbody.innerHTML += row;
@@ -219,31 +236,22 @@ window.changeLaporanPage = function(p) {
     document.getElementById('laporan-table-container')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-// --- MODAL HANDLERS (Global Scope agar bisa dipanggil onclick jika perlu, tapi di sini kita pakai Event Delegation) ---
+// --- MODAL HANDLERS ---
 
 window.openLaporanEdit = function(id) {
     const item = allReports.find(r => r.id_report_app == id);
     if (!item) return;
-    
     document.getElementById('edit-laporan-id').value = id;
     document.getElementById('edit-laporan-app').value = item.nama_aplikasi;
-    
-    // UPDATE: Set checkboxes berdasarkan string jenis_laporan
-    // (Misal: "Error, Inactive" -> checkbox 'Error' dan 'Inactive' dicentang)
-    const checkboxes = document.querySelectorAll('input[name="edit-kategori-laporan"]');
-    checkboxes.forEach(cb => cb.checked = false); // Reset dulu
 
-    if (item.jenis_laporan) {
-        const types = item.jenis_laporan.split(',').map(s => s.trim());
-        checkboxes.forEach(cb => {
-            if (types.includes(cb.value)) {
-                cb.checked = true;
-            }
-        });
-    }
+    // Set checkboxes (jika ada banyak jenis)
+    const types = item.jenis_laporan ? item.jenis_laporan.split(',').map(s => s.trim()) : [];
+    const checkboxes = document.querySelectorAll('input[name="edit-kategori-laporan"]');
+    checkboxes.forEach(cb => {
+        cb.checked = types.includes(cb.value);
+    });
 
     document.getElementById('edit-laporan-ket').value = item.keterangan;
-    
     openModal('modal-laporan-edit');
 }
 
@@ -296,14 +304,14 @@ function attachLaporanListeners() {
         e.preventDefault();
         const id = document.getElementById('edit-laporan-id').value;
         
-        // UPDATE: Kumpulkan value dari checkbox
+        // Ambil value checkbox
         const checkedKategori = [];
         document.querySelectorAll('input[name="edit-kategori-laporan"]:checked').forEach(cb => {
             checkedKategori.push(cb.value);
         });
 
         const data = {
-            jenis_laporan: checkedKategori.join(', '), // Gabung jadi string
+            jenis_laporan: checkedKategori.join(', '),
             keterangan: document.getElementById('edit-laporan-ket').value
         };
         await sendLaporanRequest(`http://localhost:5000/api/laporan/${id}`, 'PUT', data, 'modal-laporan-edit');
@@ -345,6 +353,7 @@ async function sendLaporanRequest(url, method, body, modalId) {
         if (res.ok) {
             closeModal(modalId);
             loadLaporanData(); // Reload tabel
+            alert('Berhasil!');
         } else {
             alert(`Gagal: ${resData.message || 'Terjadi kesalahan'}`);
         }

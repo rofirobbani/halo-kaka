@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.js';
 import submissionRoutes from './routes/submissions.js';
 import userRoutes from './routes/users.js';
 import compilationRoutes from './routes/compilations.js';
+import klilinkRoutes from './routes/klilink.js';
 
 // Impor db (hanya untuk cek koneksi)
 import db from './config/db.js'; 
@@ -39,6 +40,8 @@ app.use('/api/submissions', submissionRoutes);
 app.use('/api/users', userRoutes);
 // Rute Penambahan/kompilasi
 app.use('/api/kompilasi', compilationRoutes); 
+// Rute klilink
+app.use('/api/klilink', klilinkRoutes); 
 
 
 

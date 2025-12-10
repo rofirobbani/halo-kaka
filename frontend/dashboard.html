@@ -128,10 +128,18 @@
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H5a2 2 0 00-2 2zm0 0h18"></path></svg>
                             Laporan
                         </button>
+                        
+                        <!-- TAB BARU: KLILINK -->
+                        <button data-tab="tab-klilink" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            Kelola Link
+                        </button>
+
                         <button data-tab="tab-favourite" class="tab-button flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             Favourite
                         </button>
+                        
                         <!-- Tab Khusus Admin -->
                         <button id="tab-btn-pengguna" data-tab="tab-pengguna" class="tab-button hidden flex items-center text-left w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 hover:text-accent transition-all duration-200 border-b-4 md:border-b-0 md:border-l-4 border-transparent">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -145,7 +153,7 @@
                 </div>
             </aside>
 
-            <!-- Konten Tab (Akan diisi bertahap) -->
+            <!-- Konten Tab (Placeholder HTML) -->
             <section class="w-full md:w-3/4 lg:w-4/5">
                 
                 <!-- Konten 1: Penambahan -->
@@ -157,18 +165,23 @@
                 <div id="tab-laporan" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten laporan...</p>
                 </div>
+                
+                <!-- Konten 3: KLILINK -->
+                <div id="tab-klilink" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <p>Memuat konten link...</p>
+                </div>
 
-                <!-- Konten 3: Favourite -->
+                <!-- Konten 4: Favourite -->
                 <div id="tab-favourite" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten favorit...</p>
                 </div>
 
-                <!-- Konten 4: Pengguna (Admin Only) -->
+                <!-- Konten 5: Pengguna (Admin Only) -->
                 <div id="tab-pengguna" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten pengguna...</p>
                 </div>
 
-                <!-- Konten 5: Kompilasi (Admin Only) -->
+                <!-- Konten 6: Kompilasi (Admin Only) -->
                 <div id="tab-kompilasi" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-lg">
                     <p>Memuat konten kompilasi...</p>
                 </div>
@@ -252,6 +265,11 @@
                     if (tabId === 'tab-laporan' && typeof initTabLaporan === 'function') { 
                         initTabLaporan(); 
                     } 
+                    // === PERBAIKAN: Panggil initTabKlilink ===
+                    if (tabId === 'tab-klilink' && typeof window.initTabKlilink === 'function') {
+                        window.initTabKlilink();
+                    }
+                    
                     if (tabId === 'tab-favourite' && typeof initTabFavourite === 'function') {
                         initTabFavourite();
                     }
@@ -291,10 +309,8 @@
                     }
                 });
                 
-                // 3. Update URL Hash (misal: #penambahan)
-                // Hilangkan prefix 'tab-' untuk URL yang lebih bersih
+                // 3. Update URL Hash
                 const hashName = targetTabId.replace('tab-', '');
-                // Menggunakan replaceState agar history browser tidak penuh
                 history.replaceState(null, null, `#${hashName}`);
             }
 
@@ -324,6 +340,8 @@
                 const tabPromises = [
                     loadTabContent('tab-penambahan', 'components/dashboard/tab_penambahan.html', 'js/tabs/tab_penambahan.js'),
                     loadTabContent('tab-laporan', 'components/dashboard/tab_laporan.html', 'js/tabs/tab_laporan.js'),
+                    // === TAMBAHAN: Muat Tab KLILINK ===
+                    loadTabContent('tab-klilink', 'components/dashboard/tab_klilink.html', 'js/tabs/tab_klilink.js'),
                     loadTabContent('tab-favourite', 'components/dashboard/tab_favourite.html', 'js/tabs/tab_favourite.js')
                 ];
                 
@@ -336,14 +354,17 @@
 
                 // 3. Pasang listener Pindah Tab
                 const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+
                 tabButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         const targetTab = button.getAttribute('data-tab'); 
-                        activateTab(targetTab); // Panggil fungsi aktivasi yang baru
+                        activateTab(targetTab); 
                         
                         // Panggil fungsi init lagi jika perlu refresh data saat klik tab
                         if (targetTab === 'tab-penambahan' && typeof initTabPenambahan === 'function') initTabPenambahan();
                         if (targetTab === 'tab-laporan' && typeof initTabLaporan === 'function') initTabLaporan();
+                        if (targetTab === 'tab-klilink' && typeof window.initTabKlilink === 'function') window.initTabKlilink();
                         if (targetTab === 'tab-pengguna' && typeof window.initTabPengguna === 'function') window.initTabPengguna();
                         if (targetTab === 'tab-kompilasi' && typeof initTabKompilasi === 'function') initTabKompilasi();
                     });
@@ -353,7 +374,6 @@
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash) {
                     const targetTabId = `tab-${currentHash}`;
-                    // Pastikan tab yang diminta ada dan boleh diakses
                     const targetBtn = document.querySelector(`button[data-tab="${targetTabId}"]`);
                     
                     if (targetBtn && !targetBtn.classList.contains('hidden')) {

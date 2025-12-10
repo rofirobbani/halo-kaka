@@ -163,14 +163,9 @@ function renderKompilasiTable() {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-gray-50 transition-colors";
         
-        // PERBAIKAN: Konsistensi ukuran logo dengan tab_penambahan
-        // Menggunakan container kotak h-10 w-10, bg-accent-light, rounded-md, p-1
-        const logoContent = (a.logo && a.logo.startsWith('<svg')) 
-            ? a.logo.replace('w-10 h-10', 'w-6 h-6').replace('w-full h-full', 'w-6 h-6') // Sesuaikan ukuran SVG
-            : (a.logo ? `<img src="${a.logo}" class="w-full h-full object-contain">` 
-            : `<span class="text-lg font-bold text-accent">${a.nama.substring(0,2).toUpperCase()}</span>`);
-            
-        const logoHtml = `<div class="flex-shrink-0 h-10 w-10 bg-accent-light rounded-md flex items-center justify-center text-accent overflow-hidden p-1 mr-3">${logoContent}</div>`;
+        const logoHtml = (a.logo && a.logo.startsWith('<svg')) 
+            ? a.logo.replace('w-10 h-10', 'w-8 h-8') 
+            : (a.logo ? `<img src="${a.logo}" class="w-8 h-8 object-cover rounded">` : `<div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center text-xs font-bold text-gray-500">${a.nama.substring(0,2)}</div>`);
 
         // Toggle Switch (Checkbox style)
         const isChecked = a.flag_view === 1 ? 'checked' : '';
@@ -181,10 +176,21 @@ function renderKompilasiTable() {
             </label>
         `;
 
+        // --- UPDATE: Tombol Aksi menggunakan Ikon SVG & Text Wrapping ---
+        const editBtn = `
+            <button onclick="openKompilasiEdit('${a.id_app}')" class="text-accent hover:text-accent-dark mr-3 transition-colors" title="Edit">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </button>`;
+
+        const deleteBtn = `
+            <button onclick="openKompilasiDelete('${a.id_app}', '${a.nama.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 transition-colors" title="Delete">
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>`;
+
         tr.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="px-6 py-4 whitespace-normal break-words max-w-xs">
                 <div class="flex items-center">
-                    ${logoHtml}
+                    <div class="flex-shrink-0 mr-3">${logoHtml}</div>
                     <div>
                         <div class="text-sm font-medium text-gray-900">${a.nama}</div>
                         <div class="text-xs text-gray-500">${a.tahun_buat || '-'}</div>
@@ -203,8 +209,8 @@ function renderKompilasiTable() {
                 ${toggleSwitch}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button onclick="openKompilasiEdit('${a.id_app}')" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                <button onclick="openKompilasiDelete('${a.id_app}', '${a.nama.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-900">Delete</button>
+                ${editBtn}
+                ${deleteBtn}
             </td>
         `;
         fragment.appendChild(tr);
