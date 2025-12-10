@@ -1,17 +1,13 @@
 // --- File: frontend/js/tabs/tab_kompilasi.js ---
-// Logika khusus untuk Tab Kompilasi (Admin Only)
-// Menggunakan gaya kodingan yang konsisten dengan tab_pengguna.js
 
-// Variabel Global untuk Tab Ini
 let allApps = [];
 let currentFilteredApps = [];
 let kompPage = 1;
 const kompPerPage = 10;
 
-// Konstanta Logo Default (Sama dengan tab_penambahan)
 const DEFAULT_BPS_LOGO_KOMPILASI = `<svg class="w-full h-full text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>`;
 
-// --- FUNGSI GLOBAL WINDOW (Utilitas Logo) ---
+// --- FUNGSI GLOBAL WINDOW ---
 
 window.toggleKompilasiLogoInput = function(value) {
     const uploadContainer = document.getElementById('edit-kompilasi-logo-upload-container');
@@ -26,7 +22,6 @@ window.toggleKompilasiLogoInput = function(value) {
     }
 }
 
-// Helper Konversi (Reuse atau definisikan lokal jika tidak global)
 const convertKompilasiToBase64 = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -36,39 +31,27 @@ const convertKompilasiToBase64 = (file) => {
     });
 };
 
-
-// 1. Fungsi Utama Inisialisasi (Wajib Global agar bisa dipanggil dashboard.html)
-async function initTabKompilasi() {
+window.initTabKompilasi = async function() {
     console.log("Fungsi initTabKompilasi dimulai...");
-
-    // Ambil Token & Role TERBARU
     const currentRole = localStorage.getItem('haloKakaUserRole');
-
-    // Security Check: Frontend Guard
     const container = document.getElementById('kompilasi-table-container');
     if (!container) return; 
 
     if (currentRole !== 'Admin') {
-        container.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-64 text-red-500 bg-red-50 rounded-lg border border-red-200">
-                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                <p class="font-semibold">Akses Ditolak. Halaman ini khusus Administrator.</p>
-            </div>`;
+        container.innerHTML = `<div class="flex flex-col items-center justify-center h-64 text-red-500 bg-red-50 rounded-lg border border-red-200"><p class="font-semibold">Akses Ditolak.</p></div>`;
         return;
     }
 
-    // Reset Filter & Halaman
     const searchInput = document.getElementById('kompilasi-search');
     const statusInput = document.getElementById('kompilasi-filter-status');
     if (searchInput) searchInput.value = '';
     if (statusInput) statusInput.value = '';
     kompPage = 1;
 
-    attachKompilasiListeners(); // Pasang event listener
-    await loadKompilasiData();  // Muat data
+    attachKompilasiListeners();
+    await loadKompilasiData();
 }
 
-// 2. Load Data dari API
 async function loadKompilasiData() {
     const loading = document.getElementById('kompilasi-loading');
     const container = document.getElementById('kompilasi-table-container');
@@ -84,13 +67,11 @@ async function loadKompilasiData() {
 
     try {
         const token = localStorage.getItem('haloKakaToken');
-        
         const res = await fetch('http://localhost:5000/api/kompilasi', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Gagal mengambil data aplikasi');
-        
         allApps = await res.json();
         handleKompilasiFilter(); 
     } catch (err) {
@@ -104,7 +85,6 @@ async function loadKompilasiData() {
     }
 }
 
-// 3. Filter Logic
 function handleKompilasiFilter() {
     const searchInput = document.getElementById('kompilasi-search');
     const statusInput = document.getElementById('kompilasi-filter-status');
@@ -112,7 +92,7 @@ function handleKompilasiFilter() {
     if (!searchInput || !statusInput) return;
 
     const query = searchInput.value.toLowerCase();
-    const statusView = statusInput.value; // 'active' | 'inactive' | ''
+    const statusView = statusInput.value;
 
     currentFilteredApps = allApps.filter(a => {
         const matchQuery = (a.nama && a.nama.toLowerCase().includes(query)) ||
@@ -126,11 +106,10 @@ function handleKompilasiFilter() {
         return matchQuery && matchStatus;
     });
 
-    kompPage = 1; // Reset ke halaman 1
+    kompPage = 1;
     renderKompilasiTable();
 }
 
-// 4. Render Tabel
 function renderKompilasiTable() {
     const tbody = document.getElementById('kompilasi-table-body');
     const container = document.getElementById('kompilasi-table-container');
@@ -163,11 +142,28 @@ function renderKompilasiTable() {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-gray-50 transition-colors";
         
-        const logoHtml = (a.logo && a.logo.startsWith('<svg')) 
-            ? a.logo.replace('w-10 h-10', 'w-8 h-8') 
-            : (a.logo ? `<img src="${a.logo}" class="w-8 h-8 object-cover rounded">` : `<div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center text-xs font-bold text-gray-500">${a.nama.substring(0,2)}</div>`);
+        // --- PERBAIKAN LOGO: Konsisten dengan tab_penambahan ---
+        let logoContent = '';
+        
+        if (a.logo && a.logo.trim().startsWith('<svg')) {
+            // Jika SVG: Paksa ukurannya agar pas di container
+            // Kita replace width/height lama dengan class w-full h-full
+            let svgStr = a.logo;
+            // Hapus width/height hardcoded jika ada, ganti dengan class
+            // Cara paling aman: Bungkus di div full size
+            logoContent = `<div class="w-full h-full text-accent">${svgStr}</div>`;
+        } else if (a.logo && a.logo.trim() !== '') {
+            // Jika Gambar (Base64/URL): Gunakan object-contain
+            logoContent = `<img src="${a.logo}" class="w-full h-full object-contain">`;
+        } else {
+            // Jika Kosong: Tampilkan Inisial
+            logoContent = `<span class="text-lg font-bold text-accent">${a.nama.substring(0,2).toUpperCase()}</span>`;
+        }
 
-        // Toggle Switch (Checkbox style)
+        // Container Logo: w-12 h-12, rounded-lg, p-1 (Sama seperti tab_penambahan list view)
+        const logoHtml = `<div class="flex-shrink-0 w-10 h-10 bg-accent-light rounded-lg flex items-center justify-center text-gray-400 overflow-hidden p-1 mr-4">${logoContent}</div>`;
+        // -------------------------------------------------------
+
         const isChecked = a.flag_view === 1 ? 'checked' : '';
         const toggleSwitch = `
             <label class="relative inline-flex items-center cursor-pointer">
@@ -176,7 +172,6 @@ function renderKompilasiTable() {
             </label>
         `;
 
-        // --- UPDATE: Tombol Aksi menggunakan Ikon SVG & Text Wrapping ---
         const editBtn = `
             <button onclick="openKompilasiEdit('${a.id_app}')" class="text-accent hover:text-accent-dark mr-3 transition-colors" title="Edit">
                 <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -190,7 +185,7 @@ function renderKompilasiTable() {
         tr.innerHTML = `
             <td class="px-6 py-4 whitespace-normal break-words max-w-xs">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 mr-3">${logoHtml}</div>
+                    ${logoHtml}
                     <div>
                         <div class="text-sm font-medium text-gray-900">${a.nama}</div>
                         <div class="text-xs text-gray-500">${a.tahun_buat || '-'}</div>
@@ -220,7 +215,6 @@ function renderKompilasiTable() {
     setupKompilasiPagination(currentFilteredApps.length);
 }
 
-// 5. Pagination Logic
 function setupKompilasiPagination(total) {
     const container = document.getElementById('kompilasi-pagination');
     if (!container) return;
@@ -260,13 +254,12 @@ window.toggleAppView = async function(id, isChecked) {
             loadKompilasiData(); // Revert checkbox if failed
             alert('Gagal mengubah status view.');
         } else {
-            // Update local data tanpa reload
             const app = allApps.find(a => a.id_app == id);
             if (app) app.flag_view = isChecked ? 1 : 0;
         }
     } catch (err) {
         console.error(err);
-        loadKompilasiData(); // Revert
+        loadKompilasiData(); 
     }
 }
 
@@ -284,7 +277,7 @@ window.openKompilasiEdit = function(id) {
     document.getElementById('edit-kompilasi-narahubung').value = a.narahubung;
     document.getElementById('edit-kompilasi-status').value = a.status_aplikasi;
     
-    // --- LOGIKA LOGO BARU ---
+    // LOGIKA LOGO EDIT
     const existingLogoInput = document.getElementById('edit-kompilasi-existing-logo');
     const previewDiv = document.getElementById('edit-kompilasi-logo-preview');
     const radioDefault = document.querySelector('input[name="edit_kompilasi_logo_option"][value="default"]');
@@ -293,11 +286,9 @@ window.openKompilasiEdit = function(id) {
     existingLogoInput.value = a.logo || '';
     
     if (!a.logo || a.logo.includes('<svg')) {
-        // Jika logo default (SVG) atau kosong
         radioDefault.checked = true;
         toggleKompilasiLogoInput('default');
     } else {
-        // Jika logo custom (gambar)
         radioUpload.checked = true;
         toggleKompilasiLogoInput('upload');
         previewDiv.innerHTML = `<img src="${a.logo}" class="w-full h-full object-contain">`;
@@ -326,16 +317,13 @@ function attachKompilasiListeners() {
         filterStatus.onchange = handleKompilasiFilter;
     }
 
-    // Submit Edit (Updated)
+    // Submit Edit
     const formEdit = document.getElementById('form-kompilasi-edit');
     if(formEdit) {
         formEdit.onsubmit = async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-kompilasi-id').value;
-            const errorEl = document.getElementById('modal-kompilasi-edit-error');
-            errorEl.style.display = 'none';
-
-            // Ambil data dasar
+            
             const data = {
                 nama: document.getElementById('edit-kompilasi-nama').value,
                 tahun_buat: document.getElementById('edit-kompilasi-tahun').value,
@@ -347,32 +335,26 @@ function attachKompilasiListeners() {
                 status_aplikasi: document.getElementById('edit-kompilasi-status').value
             };
 
-            // LOGIKA LOGO PADA SUBMIT (Mirip tab_penambahan)
             const logoOption = document.querySelector('input[name="edit_kompilasi_logo_option"]:checked').value;
             let finalLogo = DEFAULT_BPS_LOGO_KOMPILASI;
 
             if (logoOption === 'default') {
                 finalLogo = DEFAULT_BPS_LOGO_KOMPILASI;
             } else {
-                // Opsi Upload
                 const fileInput = document.getElementById('edit-kompilasi-logo-file');
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
-                    // Validasi size
                     if (file.size > 2 * 1024 * 1024) {
-                        errorEl.innerText = "Ukuran file terlalu besar (Maks 2MB)";
-                        errorEl.style.display = 'block';
+                        alert("Ukuran file terlalu besar (Maks 2MB)");
                         return;
                     }
                     try {
                         finalLogo = await convertKompilasiToBase64(file);
                     } catch (err) {
-                        errorEl.innerText = "Gagal memproses gambar.";
-                        errorEl.style.display = 'block';
+                        alert("Gagal memproses gambar.");
                         return;
                     }
                 } else {
-                    // Tidak ada file baru dipilih -> Gunakan logo lama (jika bukan svg default)
                     const existing = document.getElementById('edit-kompilasi-existing-logo').value;
                     if (existing && !existing.includes('<svg')) {
                          finalLogo = existing;
@@ -412,16 +394,7 @@ function attachKompilasiListeners() {
     }
 }
 
-// 7. Helper Request
 async function sendKompilasiRequest(url, method, body, modalId) {
-    const btnSubmit = document.querySelector(`#${modalId} button[type="submit"]`);
-    const originalText = btnSubmit ? btnSubmit.innerText : 'Simpan';
-    
-    if(btnSubmit) {
-        btnSubmit.disabled = true;
-        btnSubmit.innerText = 'Memproses...';
-    }
-
     try {
         const token = localStorage.getItem('haloKakaToken');
         const opts = {
@@ -438,7 +411,7 @@ async function sendKompilasiRequest(url, method, body, modalId) {
 
         if (res.ok) {
             if(typeof closeModal === 'function') closeModal(modalId);
-            loadKompilasiData(); // Reload tabel
+            loadKompilasiData();
             alert('Berhasil: Data telah disimpan.');
         } else {
             alert(`Gagal: ${resData.message || 'Terjadi kesalahan'}`);
@@ -446,10 +419,5 @@ async function sendKompilasiRequest(url, method, body, modalId) {
     } catch (err) {
         console.error(err);
         alert('Terjadi kesalahan koneksi ke server.');
-    } finally {
-        if(btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = originalText;
-        }
     }
 }
